@@ -1,11 +1,10 @@
 import numpy as np
 from colorama import Fore, Back, Style
+from config import *
 
 
 class Screen:
 
-    screenheight = 31
-    screenwidth = 127
     color_mask = np.full((screenheight, screenwidth, 1), Fore.RED)
     matrix = np.full((screenheight, screenwidth, 1), ' ')
     background_color = Back.BLUE
@@ -21,15 +20,15 @@ class Screen:
 
     def printscreen(self):
         print(self.background_color + Style.BRIGHT, end='')
-        for i in range(self.screenheight):
-            for j in range(self.screenwidth):
+        for i in range(screenheight):
+            for j in range(screenwidth):
                 print(self.color_mask[i][j][0] + self.matrix[i][j][0], end='')
             print()
 
     def clrscr(self):
-        self.matrix = np.full((self.screenheight, self.screenwidth, 1), ' ')
+        self.matrix = np.full((screenheight, screenwidth, 1), ' ')
         self.color_mask = np.full(
-            (self.screenheight, self.screenwidth, 1), Fore.RED)
+            (screenheight, screenwidth, 1), Fore.RED)
 
 
 # sc = Screen()

@@ -1,9 +1,7 @@
 from person import Person
 import numpy as np
 from colorama import Fore, Back, Style
-
-screenheight = 31
-screenwidth = 127
+from config import *
 
 
 class Mandalorian(Person):

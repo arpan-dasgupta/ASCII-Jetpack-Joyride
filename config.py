@@ -8,6 +8,11 @@ import termios
 import sys
 
 
+screenheight = 31
+screenwidth = 127
+sleep_time = 0.215
+
+
 def getchar():
     # Returns a single character from standard input
     fd = sys.stdin.fileno()

@@ -6,7 +6,7 @@ class Moving:
         self.posval = initpos
 
     def update_pos(self):
-        self.posval[1] -= 1
+        self.posval[1] -= 2
 
     def get_pos(self):
         return self.posval

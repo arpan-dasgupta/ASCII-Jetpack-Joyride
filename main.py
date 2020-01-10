@@ -22,9 +22,28 @@ def reset():
     score = 0
 
 
-def render_objects(scr, bd, msk, p, coins, coins_mask):
+def update_objects(p, coins):
+    p.move_down(1)
+    for coin in coins:
+        coin.update_pos()
+
+
+def render_objects(scr, bd, msk, p, coins):
+    to_rem_c = []
+    i = 0
+    for coin in coins:
+        if(coin.get_pos()[1] <= 0):
+            to_rem_c.append(coin)
+            continue
+        f1, f2 = coin.body()
+        scr.addToScreen(f1, f2, coin.get_pos())
+        i += 1
+    for a in to_rem_c:
+        coins.remove(a)
+        del a
     pos = p.return_pos()
     scr.addToScreen(bd, msk, pos)
+    scr.printscreen()
 
 
 def main():
@@ -33,7 +52,6 @@ def main():
     playing = 1
     coins_collected = 0
     died = 0
-    sleep_time = 0.215
 
     while(playing == 1):
         if died == 1:
@@ -51,7 +69,6 @@ def main():
         bd, msk = p.body()
         pos = p.return_pos()
         coins = []
-        coins_mask = []
         scr.addToScreen(bd, msk, pos)
         while(True):
             tick()
@@ -70,10 +87,11 @@ def main():
                     break
             clear()
             scr.clrscr()
-            new_c, new_cm = random_coin_gen()
-            render_objects(scr, bd, msk, p, coins, coins_mask)
-            p.move_down(1)
-            scr.printscreen()
+            update_objects(p, coins)
+            if np.random.randint(0, 100) < 4:
+                new_c = random_coin_gen()
+                coins.extend(new_c)
+            render_objects(scr, bd, msk, p, coins)
             time.sleep(sleep_time)
 
 

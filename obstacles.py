@@ -4,7 +4,7 @@ from colorama import Fore, Back, Style
 from config import *
 
 
-class Coins(Moving):
+class Straight_obstacle(Moving):
 
     coinval = 0
 
@@ -16,7 +16,7 @@ class Coins(Moving):
         return self.coinval
 
     def body(self):
-        aa = np.full((1, 1, 1), '*')
+        aa = np.full((np.random.randn(1, 2), 1, 1), '*')
         msk = np.full(np.shape(aa), Fore.BLACK)
         return aa, msk
 # c = Coins(5, [0, 0])
