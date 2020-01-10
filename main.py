@@ -8,6 +8,7 @@ import signal
 import tty
 import sys
 from config import *
+from coins import *
 
 
 def destroy(p):
@@ -19,6 +20,11 @@ def reset():
     global score
     timer = 150
     score = 0
+
+
+def render_objects(scr, bd, msk, p, coins, coins_mask):
+    pos = p.return_pos()
+    scr.addToScreen(bd, msk, pos)
 
 
 def main():
@@ -42,9 +48,11 @@ def main():
             exit()
         p = Mandalorian()
         keypress = KBHit()
-        bd = p.body()
+        bd, msk = p.body()
         pos = p.return_pos()
-        scr.addToScreen(bd, np.full(np.shape(bd), Fore.BLUE), pos)
+        coins = []
+        coins_mask = []
+        scr.addToScreen(bd, msk, pos)
         while(True):
             tick()
             if keypress.kbhit():
@@ -53,13 +61,17 @@ def main():
                     p.move_up(3)
                 elif ch == 's':
                     p.move_down(1)
+                elif ch == 'a':
+                    p.move_left(3)
+                elif ch == 'd':
+                    p.move_right(3)
                 else:
                     died = 1
                     break
-            pos = p.return_pos()
             clear()
             scr.clrscr()
-            scr.addToScreen(bd, np.full(np.shape(bd), Fore.BLUE), pos)
+            new_c, new_cm = random_coin_gen()
+            render_objects(scr, bd, msk, p, coins, coins_mask)
             p.move_down(1)
             scr.printscreen()
             time.sleep(sleep_time)

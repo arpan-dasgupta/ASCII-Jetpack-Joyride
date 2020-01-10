@@ -8,7 +8,7 @@ class Screen:
     screenwidth = 127
     color_mask = np.full((screenheight, screenwidth, 1), Fore.RED)
     matrix = np.full((screenheight, screenwidth, 1), ' ')
-    background_color = Back.WHITE
+    background_color = Back.BLUE
 
     def __init__(self):
         pass
