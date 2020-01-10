@@ -20,7 +20,7 @@ class Screen:
                         np.shape(obj)[0], start[1]:start[1]+np.shape(obj)[1]] = cm
 
     def printscreen(self):
-        print(self.background_color, end='')
+        print(self.background_color + Style.BRIGHT, end='')
         for i in range(self.screenheight):
             for j in range(self.screenwidth):
                 print(self.color_mask[i][j][0] + self.matrix[i][j][0], end='')
