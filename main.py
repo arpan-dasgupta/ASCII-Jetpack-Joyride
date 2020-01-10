@@ -9,6 +9,7 @@ import tty
 import sys
 from config import *
 from coins import *
+from obstacles import *
 
 
 def destroy(p):
@@ -22,14 +23,17 @@ def reset():
     score = 0
 
 
-def update_objects(p, coins):
+def update_objects(p, coins, obstacles):
     p.move_down(1)
     for coin in coins:
         coin.update_pos()
+    for obs in obstacles:
+        obs.update_pos()
 
 
-def render_objects(scr, bd, msk, p, coins):
+def render_objects(scr, bd, msk, p, coins, obstacle):
     to_rem_c = []
+    to_rem_o = []
     i = 0
     for coin in coins:
         if(coin.get_pos()[1] <= 0):
@@ -43,6 +47,17 @@ def render_objects(scr, bd, msk, p, coins):
         del a
     pos = p.return_pos()
     scr.addToScreen(bd, msk, pos)
+    i = 0
+    for obs in obstacle:
+        if(obs.get_pos()[1] <= 0):
+            to_rem_o.append(obs)
+            continue
+        f1, f2 = obs.body()
+        scr.addToScreen(f1, f2, obs.get_pos())
+        i += 1
+    for a in to_rem_o:
+        obstacle.remove(a)
+        del a
     scr.printscreen()
 
 
@@ -69,6 +84,7 @@ def main():
         bd, msk = p.body()
         pos = p.return_pos()
         coins = []
+        obstacles = []
         scr.addToScreen(bd, msk, pos)
         while(True):
             tick()
@@ -82,16 +98,21 @@ def main():
                     p.move_left(3)
                 elif ch == 'd':
                     p.move_right(3)
+                elif ch == ' ':
+                    p.shoot()
                 else:
                     died = 1
                     break
             clear()
             scr.clrscr()
-            update_objects(p, coins)
-            if np.random.randint(0, 100) < 4:
+            update_objects(p, coins, obstacles)
+            if np.random.random()*(len(coins)+1) < 0.04:
                 new_c = random_coin_gen()
                 coins.extend(new_c)
-            render_objects(scr, bd, msk, p, coins)
+            if np.random.random()*(len(obstacles)+1) < 0.04:
+                new_o = obstacle_gen()
+                obstacles.append(new_o)
+            render_objects(scr, bd, msk, p, coins, obstacles)
             time.sleep(sleep_time)
 
 

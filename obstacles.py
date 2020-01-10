@@ -6,19 +6,16 @@ from config import *
 
 class Straight_obstacle(Moving):
 
-    coinval = 0
+    aa = np.full((np.random.randint(4, 7), 1, 1), 'Z')
+    msk = np.full(np.shape(aa), Fore.RED)
 
-    def __init__(self, value, inipos):
+    def __init__(self, size, inipos):
         self.posval = inipos
-        self.coinval = value
-
-    def get_val(self):
-        return self.coinval
+        self.aa = np.full((size, 1, 1), 'Z')
+        self.msk = np.full(np.shape(self.aa), Fore.RED)
 
     def body(self):
-        aa = np.full((np.random.randn(1, 2), 1, 1), '*')
-        msk = np.full(np.shape(aa), Fore.BLACK)
-        return aa, msk
+        return self.aa, self.msk
 # c = Coins(5, [0, 0])
 # print(c.get_val())
 # print(c.get_pos())
@@ -26,14 +23,7 @@ class Straight_obstacle(Moving):
 # print(c.get_pos())
 
 
-def random_coin_gen():
-    new_c = []
+def obstacle_gen():
     baseh = np.random.randint(int(screenheight/4), int(screenheight*3/4))
-    ch = np.random.randint(3, 7)
-    cw = np.random.randint(4, 6)
-    for i in range(ch):
-        for j in range(cw):
-            basew = screenwidth - cw - 1
-            cc = Coins(1, [baseh+i, basew+j])
-            new_c.append(cc)
-    return new_c
+    obs = Straight_obstacle(np.random.randint(4, 7), [baseh, screenwidth-1])
+    return obs
