@@ -4,11 +4,16 @@ from colorama import Fore, Back
 import numpy as np
 from background import Screen
 from coins import random_coin_gen
+from collision import collision_checker
 from config import clear, tick, SLEEP_TIME, reset
 from hor_obstacles import obstacle_gen
 from kbhit import KBHit
 from magnet import Magnet, magnet_spawner
 from player import Mandalorian, SCREENWIDTH
+
+
+def check_collisions(per, obstacles, magnets, coins, bullets):
+    pass
 
 
 def update_objects(per, coins, obstacles, bullets, magnets):
@@ -150,7 +155,8 @@ def main():
                 elif c_h == 'd':
                     per.move_right(3)
                 elif c_h == ' ':
-                    bullets.append(per.shoot())
+                    if len(bullets) < 3:
+                        bullets.append(per.shoot())
                 elif c_h == '1':
                     new_c = random_coin_gen()
                     coins.extend(new_c)
@@ -175,6 +181,7 @@ def main():
             if np.random.random_sample()*(500*len(magnets)+1) < 0.04:
                 new_m = magnet_spawner()
                 magnets.append(new_m)
+            check_collisions(per, obstacles, magnets, coins, bullets)
             render_objects(scr, bod, msk, per, coins,
                            obstacles, bullets, magnets)
             time.sleep(SLEEP_TIME)
