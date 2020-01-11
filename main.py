@@ -1,29 +1,17 @@
-import termios
-import time
-import copy
-import signal
-import tty
 import sys
-from player import *
-from background import *
-from kbhit import *
-from config import *
-from coins import *
-from obstacles import *
-from diag_obstacles import *
-from hor_obstacles import *
-from bullet import *
+import time
+from colorama import Fore, Back
+import numpy as np
+from background import Screen
+from coins import random_coin_gen
+from config import clear, tick, SLEEP_TIME, reset
+from hor_obstacles import obstacle_gen
+from kbhit import KBHit
+from player import Mandalorian, SCREENWIDTH
 
 
-def reset():
-    global timer
-    global score
-    timer = 150
-    score = 0
-
-
-def update_objects(p, coins, obstacles, bullets):
-    p.move_down(1)
+def update_objects(per, coins, obstacles, bullets):
+    per.move_down(1)
     for coin in coins:
         coin.update_pos()
     for obs in obstacles:
@@ -32,51 +20,51 @@ def update_objects(p, coins, obstacles, bullets):
         bul.update_pos()
 
 
-def render_objects(scr, bd, msk, p, coins, obstacle, bullets):
+def render_objects(scr, bod, msk, per, coins, obstacle, bullets):
     to_rem_c = []
     to_rem_o = []
     i = 0
     for obs in obstacle:
-        if(obs.get_pos()[1] <= 0):
+        if obs.get_pos()[1] <= 0:
             to_rem_o.append(obs)
             continue
         our_list = obs.body()
         # print(our_list)
         # exit()
-        for a in our_list:
-            f1, f2, poses = a
-            # print(a)
-            scr.addToScreen(f1, f2, poses)
+        for a_a in our_list:
+            f_f1, f_f2, poses = a_a
+            # print(f_f1, f_f2, poses)
+            scr.add_to_screen(f_f1, f_f2, poses)
         i += 1
         # exit()
-    for a in to_rem_o:
-        obstacle.remove(a)
-        del a
+    for a_a in to_rem_o:
+        obstacle.remove(a_a)
+        del a_a
     i = 0
     for coin in coins:
-        if(coin.get_pos()[1] <= 0):
+        if coin.get_pos()[1] <= 0:
             to_rem_c.append(coin)
             continue
-        f1, f2 = coin.body()
-        scr.addToScreen(f1, f2, coin.get_pos())
+        f_f1, f_f2 = coin.body()
+        scr.add_to_screen(f_f1, f_f2, coin.get_pos())
         i += 1
-    for a in to_rem_c:
-        coins.remove(a)
-        del a
-    pos = p.return_pos()
-    scr.addToScreen(bd, msk, pos)
+    for a_a in to_rem_c:
+        coins.remove(a_a)
+        del a_a
+    pos = per.return_pos()
+    scr.add_to_screen(bod, msk, pos)
     i = 0
     to_rem_b = []
     for bullet in bullets:
-        f1, f2 = bullet.body()
-        if(bullet.get_pos()[1] >= screenwidth-np.shape(f1)[1]-1):
+        f_f1, f_f2 = bullet.body()
+        if bullet.get_pos()[1] >= SCREENWIDTH-np.shape(f_f1)[1]-1:
             to_rem_b.append(bullet)
             continue
-        scr.addToScreen(f1, f2, bullet.get_pos())
+        scr.add_to_screen(f_f1, f_f2, bullet.get_pos())
         i += 1
-    for a in to_rem_b:
-        bullets.remove(a)
-        del a
+    for a_a in to_rem_b:
+        bullets.remove(a_a)
+        del a_a
     scr.printscreen()
 
 
@@ -84,65 +72,57 @@ def main():
     scr = Screen()
     # lives = 3
     playing = 1
-    coins_collected = 0
+    # coins_collected = 0
     died = 0
-
-    while(playing == 1):
+    reset()
+    while playing == 1:
         if died == 1:
             # if lives != 0:
             #     died = 0
-            #     destroy(p)
+            #     destroy(per)
             #     time.sleep(2)
             #     # create_map()
             # else:
             clear()
             print(Back.WHITE + Fore.BLACK + "┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n███▀▀▀██┼███▀▀▀███┼███▀█▄█▀███┼██▀▀▀\n██┼┼┼┼██┼██┼┼┼┼┼██┼██┼┼┼█┼┼┼██┼██┼┼┼\n██┼┼┼▄▄▄┼██▄▄▄▄▄██┼██┼┼┼▀┼┼┼██┼██▀▀▀\n██┼┼┼┼██┼██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██┼┼┼\n███▄▄▄██┼██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██▄▄▄\n┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n███▀▀▀███┼▀███┼┼██▀┼██▀▀▀┼██▀▀▀▀██▄┼\n██┼┼┼┼┼██┼┼┼██┼┼██┼┼██┼┼┼┼██┼┼┼┼┼██┼\n██┼┼┼┼┼██┼┼┼██┼┼██┼┼██▀▀▀┼██▄▄▄▄▄▀▀┼\n██┼┼┼┼┼██┼┼┼██┼┼█▀┼┼██┼┼┼┼██┼┼┼┼┼██┼\n███▄▄▄███┼┼┼─▀█▀┼┼─┼██▄▄▄┼██┼┼┼┼┼██▄\n┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼\n┼┼┼┼┼┼████▄┼┼┼▄▄▄▄▄▄▄┼┼┼▄████┼┼┼┼┼┼┼\n┼┼┼┼┼┼┼┼┼▀▀█▄█████████▄█▀▀┼┼┼┼┼┼┼┼┼┼\n┼┼┼┼┼┼┼┼┼┼┼█████████████┼┼┼┼┼┼┼┼┼┼┼┼\n┼┼┼┼┼┼┼┼┼┼┼██▀▀▀███▀▀▀██┼┼┼┼┼┼┼┼┼┼┼┼\n┼┼┼┼┼┼┼┼┼┼┼██┼┼┼███┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼\n┼┼┼┼┼┼┼┼┼┼┼█████▀▄▀█████┼┼┼┼┼┼┼┼┼┼┼┼\n┼┼┼┼┼┼┼┼┼┼┼┼███████████┼┼┼┼┼┼┼┼┼┼┼┼┼\n┼┼┼┼┼┼┼┼▄▄▄██┼┼█▀█▀█┼┼██▄▄▄┼┼┼┼┼┼┼┼┼\n┼┼┼┼┼┼┼┼▀▀██┼┼┼┼┼┼┼┼┼┼┼██▀▀┼┼┼┼┼┼┼┼┼\n┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼\n┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n")
-            exit()
-        p = Mandalorian()
+            sys.exit()
+        per = Mandalorian()
         keypress = KBHit()
-        bd, msk = p.body()
-        pos = p.return_pos()
+        bod, msk = per.body()
+        pos = per.return_pos()
         coins = []
         obstacles = []
         bullets = []
-        scr.addToScreen(bd, msk, pos)
-        while(True):
+        scr.add_to_screen(bod, msk, pos)
+        while True:
             tick()
             if keypress.kbhit():
-                ch = keypress.getch()
-                if ch == 'w':
-                    p.move_up(3)
-                elif ch == 's':
-                    p.move_down(1)
-                elif ch == 'a':
-                    p.move_left(3)
-                elif ch == 'd':
-                    p.move_right(3)
-                elif ch == ' ':
-                    bullets.append(p.shoot())
+                c_h = keypress.getch()
+                if c_h == 'w':
+                    per.move_up(3)
+                elif c_h == 's':
+                    per.move_down(1)
+                elif c_h == 'a_a':
+                    per.move_left(3)
+                elif c_h == 'd':
+                    per.move_right(3)
+                elif c_h == ' ':
+                    bullets.append(per.shoot())
                 else:
                     died = 1
                     break
             clear()
             scr.clrscr()
-            update_objects(p, coins, obstacles, bullets)
-            if np.random.random()*(len(coins)+1) < 0.04:
+            update_objects(per, coins, obstacles, bullets)
+            if np.random.random_sample()*(len(coins)+1) < 0.04:
                 new_c = random_coin_gen()
                 coins.extend(new_c)
-            if np.random.random()*(len(obstacles)+1) < 0.04:
+            if np.random.random_sample()*(len(obstacles)+1) < 0.04:
                 new_o = obstacle_gen()
                 obstacles.append(new_o)
-            render_objects(scr, bd, msk, p, coins, obstacles, bullets)
-            time.sleep(sleep_time)
+            render_objects(scr, bod, msk, per, coins, obstacles, bullets)
+            time.sleep(SLEEP_TIME)
 
 
 if __name__ == '__main__':
     main()
-
-# scr = Screen()
-# guy = Mandalorian()
-# guy.move_down(20)
-# bd = guy.body()
-# scr.addToScreen(bd, np.full(np.shape(bd), Fore.BLUE), guy.return_pos())
-# scr.printscreen()
-# clear()

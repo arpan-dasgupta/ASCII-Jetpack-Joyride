@@ -1,42 +1,47 @@
 import os
-from kbhit import *
-import random
-from colorama import Fore, Back, Style
+import sys
 import time
 import tty
 import termios
-import sys
 
 
-screenheight = 31
-screenwidth = 127
-sleep_time = 0.215
+SCREENHEIGHT = 31
+SCREENWIDTH = 127
+SLEEP_TIME = 0.215
 
 
 def getchar():
     # Returns a single character from standard input
-    fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
+    file_desc = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(file_desc)
     try:
         tty.setraw(sys.stdin.fileno())
-        ch = sys.stdin.read(1)
+        charred = sys.stdin.read(1)
     finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-    return ch
+        termios.tcsetattr(file_desc, termios.TCSADRAIN, old_settings)
+    return charred
 
 
-timer = 0
-score = 0
+TIMER = 0
+SCORE = 0
+CUR_TIME = 0
+
+
+def reset():
+    global TIMER
+    global SCORE
+    TIMER = 150
+    SCORE = 0
 
 
 def tick():
-    global timer
-    global cur_time
-    if (timer > 0):
-        if time.time() - cur_time >= 1:
-            timer -= 1
-            cur_time = time.time()
-    return timer
+    global TIMER
+    global CUR_TIME
+    if TIMER > 0:
+        if time.time() - CUR_TIME >= 1:
+            TIMER -= 1
+            CUR_TIME = time.time()
+    return TIMER
 
 
 def clear():
@@ -45,10 +50,10 @@ def clear():
 
 
 if __name__ == "__main__":
-    while(True):
+    while True:
         print("press any key")
-        ch = getchar()
+        CHARAC = getchar()
         print('You pressed')
-        print(ch)
-        if(ch == 'q'):
-            exit(0)
+        print(CHARAC)
+        if CHARAC == 'q':
+            sys.exit()

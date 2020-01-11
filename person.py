@@ -1,11 +1,7 @@
-import numpy as np
-from colorama import Fore, Back, Style
-
-
 class Person:
 
     def body(self):
-        return
+        pass
 
     def move(self):
         pass

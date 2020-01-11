@@ -1,7 +1,7 @@
-from moving import *
+from colorama import Fore
 import numpy as np
-from colorama import Fore, Back, Style
-from config import *
+from config import SCREENHEIGHT, SCREENWIDTH
+from moving import Moving
 
 
 class Coins(Moving):
@@ -16,9 +16,10 @@ class Coins(Moving):
         return self.coinval
 
     def body(self):
-        aa = np.full((1, 1, 1), '*')
-        msk = np.full(np.shape(aa), Fore.BLACK)
-        return aa, msk
+        array = np.full((1, 1, 1), '*')
+        msk = np.full(np.shape(array), Fore.BLACK)
+        self.coinval = self.coinval
+        return array, msk
 # c = Coins(5, [0, 0])
 # print(c.get_val())
 # print(c.get_pos())
@@ -28,12 +29,12 @@ class Coins(Moving):
 
 def random_coin_gen():
     new_c = []
-    baseh = np.random.randint(int(screenheight/4), int(screenheight*3/4))
-    ch = np.random.randint(3, 7)
-    cw = np.random.randint(4, 6)
-    for i in range(ch):
-        for j in range(cw):
-            basew = screenwidth - cw - 1
-            cc = Coins(1, [baseh+i, basew+j])
-            new_c.append(cc)
+    baseh = np.random.randint(int(SCREENHEIGHT/4), int(SCREENHEIGHT*3/4))
+    coin_height = np.random.randint(3, 7)
+    coin_width = np.random.randint(4, 6)
+    for i in range(coin_height):
+        for j in range(coin_width):
+            basew = SCREENWIDTH - coin_width - 1
+            coin_obj = Coins(1, [baseh+i, basew+j])
+            new_c.append(coin_obj)
     return new_c

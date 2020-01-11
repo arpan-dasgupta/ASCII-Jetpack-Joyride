@@ -1,8 +1,8 @@
-from person import Person
+from colorama import Fore
 import numpy as np
-from colorama import Fore, Back, Style
-from config import *
-from bullet import *
+from bullet import Bullet
+from config import SCREENWIDTH, SCREENHEIGHT
+from person import Person
 
 
 class Mandalorian(Person):
@@ -11,8 +11,8 @@ class Mandalorian(Person):
     dim = [5, 8]
 
     def shoot(self):
-        b = Bullet(self.curpos.copy())
-        return b
+        bullet = Bullet(self.curpos.copy())
+        return bullet
 
     def attack(self):
         pass
@@ -27,53 +27,53 @@ class Mandalorian(Person):
         self.curpos[1] = max(0, self.curpos[1]-val)
 
     def move_down(self, val):
-        self.curpos[0] = min(screenheight-self.dim[0], self.curpos[0]+val)
+        self.curpos[0] = min(SCREENHEIGHT-self.dim[0], self.curpos[0]+val)
 
     def move_right(self, val):
-        self.curpos[1] = min(screenwidth-self.dim[1], self.curpos[1]+val)
+        self.curpos[1] = min(SCREENWIDTH-self.dim[1], self.curpos[1]+val)
 
     def body(self):
-        aa = np.array([[[' '],
-                        [' '],
-                        [' '],
-                        ['='],
-                        ['='],
-                        [' '],
-                        [' '],
-                        [' ']],
-                       [['<'],
-                        ['^'],
-                        ['\\'],
-                        ['('],
-                        [')'],
-                        ['/'],
-                        ['^'],
-                        ['>']],
-                       [[' '],
-                        ['\\'],
-                        ['/'],
-                        [' '],
-                        [' '],
-                        ['\\'],
-                        ['/'],
-                        [' ']
-                        ],
-                       [[' '],
-                        [' '],
-                        ['/'],
-                        [' '],
-                        [' '],
-                        ['\\'],
-                        [' '],
-                        [' ']],
-                       [[' '],
-                        [' '],
-                        ['`'],
-                        ['\''],
-                        ['\''],
-                        ['`'],
-                        [' '],
-                        [' '],
-                        ]])
-        msk = np.full(np.shape(aa), Fore.RED)
-        return aa, msk
+        array = np.array([[[' '],
+                           [' '],
+                           [' '],
+                           ['='],
+                           ['='],
+                           [' '],
+                           [' '],
+                           [' ']],
+                          [['<'],
+                           ['^'],
+                           ['\\'],
+                           ['('],
+                           [')'],
+                           ['/'],
+                           ['^'],
+                           ['>']],
+                          [[' '],
+                           ['\\'],
+                           ['/'],
+                           [' '],
+                           [' '],
+                           ['\\'],
+                           ['/'],
+                           [' ']
+                           ],
+                          [[' '],
+                           [' '],
+                           ['/'],
+                           [' '],
+                           [' '],
+                           ['\\'],
+                           [' '],
+                           [' ']],
+                          [[' '],
+                           [' '],
+                           ['`'],
+                           ['\''],
+                           ['\''],
+                           ['`'],
+                           [' '],
+                           [' '],
+                           ]])
+        msk = np.full(np.shape(array), Fore.RED)
+        return array, msk
