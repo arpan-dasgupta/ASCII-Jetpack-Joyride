@@ -17,6 +17,28 @@ class Mandalorian(Person):
     def attack(self):
         pass
 
+    def attract(self, pos, range):
+        if np.abs(pos[0]-self.curpos[0])+np.abs(pos[1]-self.curpos[1]) < range:
+            ran = np.random.random_sample()
+            new_a = np.subtract(pos, ran)
+            ratio = new_a[0]/(new_a[0]+new_a[1]+0.001)
+            # print(ratio, ran)
+            # print(self.curpos, pos)
+            if ran < ratio:
+                self.curpos[1] += 4 * ((-1)**(pos[1] < self.curpos[1]))
+            else:
+                self.curpos[0] += 2 * ((-1)**(pos[0] < self.curpos[0]))
+            # exit()
+            # print(self.curpos)
+            if self.curpos[0] < 0:
+                self.curpos[0] = 0
+            if self.curpos[1] < 0:
+                self.curpos[1] = 0
+            if self.curpos[0] > SCREENHEIGHT:
+                self.curpos[0] = SCREENHEIGHT
+            if self.curpos[1] > SCREENWIDTH:
+                self.curpos[1] = SCREENWIDTH
+
     def return_pos(self):
         return self.curpos
 
