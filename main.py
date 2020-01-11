@@ -10,10 +10,7 @@ import sys
 from config import *
 from coins import *
 from obstacles import *
-
-
-def destroy(p):
-    del p
+from bullet import *
 
 
 def reset():
@@ -23,15 +20,17 @@ def reset():
     score = 0
 
 
-def update_objects(p, coins, obstacles):
+def update_objects(p, coins, obstacles, bullets):
     p.move_down(1)
     for coin in coins:
         coin.update_pos()
     for obs in obstacles:
         obs.update_pos()
+    for bul in bullets:
+        bul.update_pos()
 
 
-def render_objects(scr, bd, msk, p, coins, obstacle):
+def render_objects(scr, bd, msk, p, coins, obstacle, bullets):
     to_rem_c = []
     to_rem_o = []
     i = 0
@@ -57,6 +56,18 @@ def render_objects(scr, bd, msk, p, coins, obstacle):
         i += 1
     for a in to_rem_o:
         obstacle.remove(a)
+        del a
+    i = 0
+    to_rem_b = []
+    for bullet in bullets:
+        f1, f2 = bullet.body()
+        if(bullet.get_pos()[1] >= screenwidth-np.shape(f1)[1]-1):
+            to_rem_b.append(bullet)
+            continue
+        scr.addToScreen(f1, f2, bullet.get_pos())
+        i += 1
+    for a in to_rem_b:
+        bullets.remove(a)
         del a
     scr.printscreen()
 
@@ -85,6 +96,7 @@ def main():
         pos = p.return_pos()
         coins = []
         obstacles = []
+        bullets = []
         scr.addToScreen(bd, msk, pos)
         while(True):
             tick()
@@ -99,20 +111,20 @@ def main():
                 elif ch == 'd':
                     p.move_right(3)
                 elif ch == ' ':
-                    p.shoot()
+                    bullets.append(p.shoot())
                 else:
                     died = 1
                     break
             clear()
             scr.clrscr()
-            update_objects(p, coins, obstacles)
+            update_objects(p, coins, obstacles, bullets)
             if np.random.random()*(len(coins)+1) < 0.04:
                 new_c = random_coin_gen()
                 coins.extend(new_c)
             if np.random.random()*(len(obstacles)+1) < 0.04:
                 new_o = obstacle_gen()
                 obstacles.append(new_o)
-            render_objects(scr, bd, msk, p, coins, obstacles)
+            render_objects(scr, bd, msk, p, coins, obstacles, bullets)
             time.sleep(sleep_time)
 
 

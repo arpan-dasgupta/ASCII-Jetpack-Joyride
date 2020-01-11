@@ -2,6 +2,7 @@ from person import Person
 import numpy as np
 from colorama import Fore, Back, Style
 from config import *
+from bullet import *
 
 
 class Mandalorian(Person):
@@ -10,7 +11,8 @@ class Mandalorian(Person):
     dim = [5, 8]
 
     def shoot(self):
-        pass
+        b = Bullet(self.curpos.copy())
+        return b
 
     def attack(self):
         pass

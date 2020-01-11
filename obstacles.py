@@ -16,11 +16,6 @@ class Straight_obstacle(Moving):
 
     def body(self):
         return self.aa, self.msk
-# c = Coins(5, [0, 0])
-# print(c.get_val())
-# print(c.get_pos())
-# c.update_pos()
-# print(c.get_pos())
 
 
 def obstacle_gen():
