@@ -3,6 +3,7 @@ import numpy as np
 from colorama import Fore, Back, Style
 from config import *
 from obstacles import *
+from diag_obstacles import *
 
 
 class Hor_obstacle(Obstacle):
@@ -18,6 +19,9 @@ def obstacle_gen():
     kk = np.random.randint(0, 3)
     if kk == 1:
         obs = Obstacle(np.random.randint(4, 7), [baseh, screenwidth-1])
+    elif kk == 0:
+        obs = Diag_obstacle(np.random.randint(
+            4, 7), [baseh, screenwidth-8], np.random.randint(0, 2))
     else:
         obs = Hor_obstacle(np.random.randint(7, 10), [baseh, screenwidth-11])
 

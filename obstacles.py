@@ -15,4 +15,4 @@ class Obstacle(Moving):
         self.msk = np.full(np.shape(self.aa), Fore.RED)
 
     def body(self):
-        return self.aa, self.msk
+        return [[self.aa, self.msk, self.posval]]

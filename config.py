@@ -41,6 +41,7 @@ def tick():
 
 def clear():
     _ = os.system('clear')
+    # print('\033[2J')
 
 
 if __name__ == "__main__":

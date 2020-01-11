@@ -1,12 +1,12 @@
-from player import *
-from background import *
-from kbhit import *
 import termios
 import time
 import copy
 import signal
 import tty
 import sys
+from player import *
+from background import *
+from kbhit import *
 from config import *
 from coins import *
 from obstacles import *
@@ -36,6 +36,23 @@ def render_objects(scr, bd, msk, p, coins, obstacle, bullets):
     to_rem_c = []
     to_rem_o = []
     i = 0
+    for obs in obstacle:
+        if(obs.get_pos()[1] <= 0):
+            to_rem_o.append(obs)
+            continue
+        our_list = obs.body()
+        # print(our_list)
+        # exit()
+        for a in our_list:
+            f1, f2, poses = a
+            # print(a)
+            scr.addToScreen(f1, f2, poses)
+        i += 1
+        # exit()
+    for a in to_rem_o:
+        obstacle.remove(a)
+        del a
+    i = 0
     for coin in coins:
         if(coin.get_pos()[1] <= 0):
             to_rem_c.append(coin)
@@ -48,17 +65,6 @@ def render_objects(scr, bd, msk, p, coins, obstacle, bullets):
         del a
     pos = p.return_pos()
     scr.addToScreen(bd, msk, pos)
-    i = 0
-    for obs in obstacle:
-        if(obs.get_pos()[1] <= 0):
-            to_rem_o.append(obs)
-            continue
-        f1, f2 = obs.body()
-        scr.addToScreen(f1, f2, obs.get_pos())
-        i += 1
-    for a in to_rem_o:
-        obstacle.remove(a)
-        del a
     i = 0
     to_rem_b = []
     for bullet in bullets:
