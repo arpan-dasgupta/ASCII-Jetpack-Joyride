@@ -2,9 +2,10 @@ from moving import *
 import numpy as np
 from colorama import Fore, Back, Style
 from config import *
+from obstacles import *
 
 
-class Obstacle(Moving):
+class Diag_obstacle(Moving):
 
     aa = np.full((np.random.randint(4, 7), 1, 1), 'Z')
     msk = np.full(np.shape(aa), Fore.RED)

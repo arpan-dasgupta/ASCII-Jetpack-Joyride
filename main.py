@@ -10,6 +10,8 @@ import sys
 from config import *
 from coins import *
 from obstacles import *
+from diag_obstacles import *
+from hor_obstacles import *
 from bullet import *
 
 
