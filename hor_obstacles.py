@@ -15,7 +15,7 @@ class HorObstacle(Obstacle):
 
 def obstacle_gen():
     baseh = np.random.randint(int(SCREENHEIGHT/4), int(SCREENHEIGHT*3/4))
-    key_val = np.random.randint(0, 1)
+    key_val = np.random.randint(0, 3)
     if key_val == 1:
         obs = Obstacle(np.random.randint(4, 7), [baseh, SCREENWIDTH-1])
     elif key_val == 0:

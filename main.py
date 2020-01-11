@@ -13,7 +13,14 @@ from player import Mandalorian, SCREENWIDTH
 
 
 def check_collisions(per, obstacles, magnets, coins, bullets):
-    pass
+    for obstacle in obstacles:
+        obs = obstacle.body()
+        part3, _ = per.body()
+        for indiv in obs:
+            part1, _, pos = indiv
+            if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
+                    np.shape(part3)[0], np.shape(part3)[1]], pos, per.return_pos()):
+                exit()
 
 
 def update_objects(per, coins, obstacles, bullets, magnets):
@@ -181,9 +188,9 @@ def main():
             if np.random.random_sample()*(500*len(magnets)+1) < 0.04:
                 new_m = magnet_spawner()
                 magnets.append(new_m)
-            check_collisions(per, obstacles, magnets, coins, bullets)
             render_objects(scr, bod, msk, per, coins,
                            obstacles, bullets, magnets)
+            check_collisions(per, obstacles, magnets, coins, bullets)
             time.sleep(SLEEP_TIME)
 
 
