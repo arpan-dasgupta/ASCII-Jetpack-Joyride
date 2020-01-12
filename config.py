@@ -25,6 +25,7 @@ def getchar():
 TIMER = 0
 SCORE = 0
 CUR_TIME = 0
+MANUAL_MODE = 1
 
 
 def reset():
@@ -45,8 +46,8 @@ def tick():
 
 
 def clear():
-    _ = os.system('clear')
-    # print('\033[2J')
+    # _ = os.system('clear')
+    print('\033[0;0H')
 
 
 if __name__ == "__main__":

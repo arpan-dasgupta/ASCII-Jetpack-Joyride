@@ -6,14 +6,14 @@ from background import Screen
 from boss import Boss
 from coins import random_coin_gen
 from collision import collision_checker
-from config import clear, tick, SLEEP_TIME, reset, SCORE
+from config import clear, tick, SLEEP_TIME, reset, SCORE, MANUAL_MODE
 from hor_obstacles import obstacle_gen
 from kbhit import KBHit
 from magnet import Magnet, magnet_spawner
 from player import Mandalorian, SCREENWIDTH
 
 
-def check_collisions(per, obstacles, magnets, coins, bullets):
+def check_collisions(per, obstacles, magnets, coins, bullets, boss):
     global SCORE
     to_rem_o = []
     for obstacle in obstacles:
@@ -51,7 +51,7 @@ def check_collisions(per, obstacles, magnets, coins, bullets):
         coins.remove(coin)
 
 
-def update_objects(per, coins, obstacles, bullets, magnets):
+def update_objects(per, coins, obstacles, bullets, magnets, boss):
     per.move_down(1)
     for coin in coins:
         coin.update_pos()
@@ -62,9 +62,10 @@ def update_objects(per, coins, obstacles, bullets, magnets):
     for mag in magnets:
         mag.update_pos()
         per.attract(mag.get_pos(), mag.get_range())
+    boss.update_pos(per.return_pos())
 
 
-def render_objects(scr, bod, msk, per, coins, obstacle, bullets, magnets):
+def render_objects(scr, bod, msk, per, coins, obstacle, bullets, magnets, boss):
     to_rem_c = []
     to_rem_o = []
     to_rem_m = []
@@ -121,10 +122,12 @@ def render_objects(scr, bod, msk, per, coins, obstacle, bullets, magnets):
     for a_a in to_rem_b:
         bullets.remove(a_a)
         del a_a
+    scr.add_to_screen(*(boss.body()), boss.get_pos())
     scr.printscreen()
 
 
 def main():
+    global MANUAL_MODE
     scr = Screen()
     # lives = 3
     playing = 1
@@ -168,6 +171,7 @@ def main():
                     ┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼
                     """)
             sys.exit()
+        boss = Boss()
         per = Mandalorian()
         keypress = KBHit()
         bod, msk = per.body()
@@ -206,19 +210,21 @@ def main():
                     break
             clear()
             scr.clrscr()
-            update_objects(per, coins, obstacles, bullets, magnets)
-            if np.random.random_sample()*(len(coins)+1) < 0.04:
-                new_c = random_coin_gen()
-                coins.extend(new_c)
-            if np.random.random_sample()*(len(obstacles)+1) < 0.04:
-                new_o = obstacle_gen()
-                obstacles.append(new_o)
-            if np.random.random_sample()*(500*len(magnets)+1) < 0.04:
-                new_m = magnet_spawner()
-                magnets.append(new_m)
+            update_objects(per, coins, obstacles, bullets, magnets, boss)
+            if not MANUAL_MODE:
+                if np.random.random_sample()*(len(coins)+1) < 0.04:
+                    new_c = random_coin_gen()
+                    coins.extend(new_c)
+                if np.random.random_sample()*(len(obstacles)+1) < 0.04:
+                    new_o = obstacle_gen()
+                    obstacles.append(new_o)
+                if np.random.random_sample()*(500*len(magnets)+1) < 0.04:
+                    new_m = magnet_spawner()
+                    magnets.append(new_m)
+
             render_objects(scr, bod, msk, per, coins,
-                           obstacles, bullets, magnets)
-            check_collisions(per, obstacles, magnets, coins, bullets)
+                           obstacles, bullets, magnets, boss)
+            check_collisions(per, obstacles, magnets, coins, bullets, boss)
             time.sleep(SLEEP_TIME)
 
 
