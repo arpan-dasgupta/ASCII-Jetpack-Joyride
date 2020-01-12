@@ -6,14 +6,15 @@ from background import Screen
 from boss import Boss
 from coins import random_coin_gen
 from collision import collision_checker
-from config import clear, tick, SLEEP_TIME, reset, SCORE, MANUAL_MODE
+from config import clear, tick, SLEEP_TIME, reset, SCORE, MANUAL_MODE, BOSS_MODE
 from hor_obstacles import obstacle_gen
 from kbhit import KBHit
 from magnet import Magnet, magnet_spawner
 from player import Mandalorian, SCREENWIDTH
+from snowball import Snowball
 
 
-def check_collisions(per, obstacles, magnets, coins, bullets, boss):
+def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs):
     global SCORE
     to_rem_o = []
     for obstacle in obstacles:
@@ -51,7 +52,7 @@ def check_collisions(per, obstacles, magnets, coins, bullets, boss):
         coins.remove(coin)
 
 
-def update_objects(per, coins, obstacles, bullets, magnets, boss):
+def update_objects(per, coins, obstacles, bullets, magnets, boss, snowballs):
     per.move_down(1)
     for coin in coins:
         coin.update_pos()
@@ -59,16 +60,19 @@ def update_objects(per, coins, obstacles, bullets, magnets, boss):
         obs.update_pos()
     for bul in bullets:
         bul.update_pos()
+    for snowball in snowballs:
+        snowball.update_pos(per.return_pos())
     for mag in magnets:
         mag.update_pos()
         per.attract(mag.get_pos(), mag.get_range())
     boss.update_pos(per.return_pos())
 
 
-def render_objects(scr, bod, msk, per, coins, obstacle, bullets, magnets, boss):
+def render_objects(scr, bod, msk, per, coins, obstacle, bullets, magnets, boss, snowballs):
     to_rem_c = []
     to_rem_o = []
     to_rem_m = []
+    to_rem_s = []
     i = 0
     for coin in coins:
         if coin.get_pos()[1] <= 0:
@@ -123,11 +127,24 @@ def render_objects(scr, bod, msk, per, coins, obstacle, bullets, magnets, boss):
         bullets.remove(a_a)
         del a_a
     scr.add_to_screen(*(boss.body()), boss.get_pos())
+    i = 0
+    for snowball in snowballs:
+        f_f1, f_f2 = snowball.body()
+        if snowball.get_pos()[1] <= 0:
+            to_rem_s.append(snowball)
+            continue
+        scr.add_to_screen(f_f1, f_f2, snowball.get_pos())
+        i += 1
+    for a_a in to_rem_s:
+        snowballs.remove(a_a)
+        del a_a
+
     scr.printscreen()
 
 
 def main():
     global MANUAL_MODE
+    global BOSS_MODE
     scr = Screen()
     # lives = 3
     playing = 1
@@ -171,6 +188,7 @@ def main():
                     ┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼
                     """)
             sys.exit()
+        snowballs = []
         boss = Boss()
         per = Mandalorian()
         keypress = KBHit()
@@ -205,13 +223,17 @@ def main():
                 elif c_h == '3':
                     new_m = magnet_spawner()
                     magnets.append(new_m)
+                elif c_h == '4':
+                    new_s = boss.shoot()
+                    snowballs.append(new_s)
                 else:
                     died = 1
                     break
             clear()
             scr.clrscr()
-            update_objects(per, coins, obstacles, bullets, magnets, boss)
-            if not MANUAL_MODE:
+            update_objects(per, coins, obstacles, bullets,
+                           magnets, boss, snowballs)
+            if not (MANUAL_MODE or BOSS_MODE):
                 if np.random.random_sample()*(len(coins)+1) < 0.04:
                     new_c = random_coin_gen()
                     coins.extend(new_c)
@@ -221,10 +243,14 @@ def main():
                 if np.random.random_sample()*(500*len(magnets)+1) < 0.04:
                     new_m = magnet_spawner()
                     magnets.append(new_m)
-
+            if BOSS_MODE and (not MANUAL_MODE):
+                if np.random.random_sample()*len(snowballs) < 0.06:
+                    new_s = boss.shoot()
+                    snowballs.append(new_s)
             render_objects(scr, bod, msk, per, coins,
-                           obstacles, bullets, magnets, boss)
-            check_collisions(per, obstacles, magnets, coins, bullets, boss)
+                           obstacles, bullets, magnets, boss, snowballs)
+            check_collisions(per, obstacles, magnets, coins,
+                             bullets, boss, snowballs)
             time.sleep(SLEEP_TIME)
 
 

@@ -2,13 +2,14 @@ import numpy as np
 from colorama import Fore
 from person import Person
 from config import SCREENHEIGHT, SCREENWIDTH
+from snowball import Snowball
 
 class Boss(Person):
 
     cur_pos = []
     array = np.array([])
     mask = np.array([])
-    cur_dir = 1
+    lives = 5
 
     def __init__(self):
         self.cur_pos = [int(SCREENHEIGHT/2-5),int(SCREENWIDTH-35)]
@@ -38,8 +39,9 @@ class Boss(Person):
         if self.cur_pos[0] + 14 > SCREENHEIGHT:
             self.cur_pos[0] = SCREENHEIGHT - 14
 
-    def shoot():
-        pass
+    def shoot(self):
+        snow = Snowball([self.cur_pos[0],self.cur_pos[1]])
+        return snow
 
     def body(self):
         return self.array,self.mask

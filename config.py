@@ -26,6 +26,7 @@ TIMER = 0
 SCORE = 0
 CUR_TIME = 0
 MANUAL_MODE = 1
+BOSS_MODE = 1
 
 
 def reset():
