@@ -3,9 +3,10 @@ import time
 from colorama import Fore, Back
 import numpy as np
 from background import Screen
+from boss import Boss
 from coins import random_coin_gen
 from collision import collision_checker
-from config import clear, tick, SLEEP_TIME, reset
+from config import clear, tick, SLEEP_TIME, reset, SCORE
 from hor_obstacles import obstacle_gen
 from kbhit import KBHit
 from magnet import Magnet, magnet_spawner
@@ -13,6 +14,25 @@ from player import Mandalorian, SCREENWIDTH
 
 
 def check_collisions(per, obstacles, magnets, coins, bullets):
+    global SCORE
+    to_rem_o = []
+    for obstacle in obstacles:
+        flag = 0
+        for bullet in bullets:
+            if flag == 1:
+                break
+            obs = obstacle.body()
+            part3, _ = bullet.body()
+            for indiv in obs:
+                part1, _, pos = indiv
+                if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
+                        np.shape(part3)[0], np.shape(part3)[1]], pos, bullet.get_pos()):
+                    flag = 1
+                    break
+        if flag == 1:
+            to_rem_o.append(obstacle)
+    for obj in to_rem_o:
+        obstacles.remove(obj)
     for obstacle in obstacles:
         obs = obstacle.body()
         part3, _ = per.body()
@@ -21,6 +41,14 @@ def check_collisions(per, obstacles, magnets, coins, bullets):
             if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
                     np.shape(part3)[0], np.shape(part3)[1]], pos, per.return_pos()):
                 exit()
+    to_rem_c = []
+    part3, _ = per.body()
+    for coin in coins:
+        if collision_checker([np.shape(part3)[0], np.shape(part3)[1]], [1, 1],  per.return_pos(), coin.get_pos()):
+            to_rem_c.append(coin)
+            SCORE += coin.get_val()
+    for coin in to_rem_c:
+        coins.remove(coin)
 
 
 def update_objects(per, coins, obstacles, bullets, magnets):
