@@ -6,7 +6,7 @@ from moving import Moving
 
 class Coins(Moving):
 
-    coinval = 0
+    coinval = 1
 
     def __init__(self, value, inipos):
         self.posval = inipos

@@ -1,5 +1,5 @@
 import numpy as np
-from colorama import Fore
+from colorama import Fore, Back
 from moving import Moving
 
 
@@ -10,7 +10,7 @@ class Bullet(Moving):
 
     def body(self):
         array = np.array([[['-'], ['-'], ['-'], ['>']]])
-        msk = np.full(np.shape(array), Fore.GREEN)
+        msk = np.full(np.shape(array), Back.WHITE)
         self.posval = self.posval
         return array, msk
 

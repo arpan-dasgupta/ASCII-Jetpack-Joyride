@@ -9,7 +9,7 @@ class Snowball(Moving):
     cur_pos = [0, 0]
     bod = np.array([])
     mask = np.array([])
-    diff = 0.5
+    diff = 0.6
 
     def __init__(self, pos):
         self.cur_pos = pos

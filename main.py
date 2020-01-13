@@ -6,16 +6,16 @@ from background import Screen
 from boss import Boss
 from coins import random_coin_gen
 from collision import collision_checker
-from config import clear, tick, SLEEP_TIME, reset, SCORE, MANUAL_MODE, BOSS_MODE
+from config import clear, tick, SLEEP_TIME, reset, MANUAL_MODE, BOSS_MODE
 from hor_obstacles import obstacle_gen
 from kbhit import KBHit
 from magnet import Magnet, magnet_spawner
 from player import Mandalorian, SCREENWIDTH
 from snowball import Snowball
+import config
 
 
 def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs):
-    global SCORE
     to_rem_o = []
     for obstacle in obstacles:
         flag = 0
@@ -34,6 +34,25 @@ def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs):
             to_rem_o.append(obstacle)
     for obj in to_rem_o:
         obstacles.remove(obj)
+    for snowball in snowballs:
+        part3, _ = per.body()
+        part1, _ = snowball.body()
+        if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
+                np.shape(part3)[0], np.shape(part3)[1]], snowball.get_pos(), per.return_pos()):
+            exit()
+    part3, _ = per.body()
+    part1, _ = boss.body()
+    if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
+            np.shape(part3)[0], np.shape(part3)[1]], boss.get_pos(), per.return_pos()):
+        exit()
+
+    for bullet in bullets:
+        part3, _ = bullet.body()
+        part1, _ = boss.body()
+        if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
+                np.shape(part3)[0], np.shape(part3)[1]], boss.get_pos(), bullet.get_pos()):
+            exit()
+
     for obstacle in obstacles:
         obs = obstacle.body()
         part3, _ = per.body()
@@ -47,7 +66,7 @@ def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs):
     for coin in coins:
         if collision_checker([np.shape(part3)[0], np.shape(part3)[1]], [1, 1],  per.return_pos(), coin.get_pos()):
             to_rem_c.append(coin)
-            SCORE += coin.get_val()
+            config.SCORE += coin.get_val()
     for coin in to_rem_c:
         coins.remove(coin)
 
