@@ -7,6 +7,7 @@ from boss import Boss
 from coins import random_coin_gen
 from collision import collision_checker
 from config import clear, tick, SLEEP_TIME, reset, MANUAL_MODE, BOSS_MODE
+from dragon import Dragon
 from hor_obstacles import obstacle_gen
 from kbhit import KBHit
 from magnet import Magnet, magnet_spawner
@@ -87,7 +88,7 @@ def update_objects(per, coins, obstacles, bullets, magnets, boss, snowballs):
     boss.update_pos(per.return_pos())
 
 
-def render_objects(scr, bod, msk, per, coins, obstacle, bullets, magnets, boss, snowballs):
+def render_objects(scr, bod, msk, per, coins, obstacle, bullets, magnets, boss, snowballs, dragon):
     to_rem_c = []
     to_rem_o = []
     to_rem_m = []
@@ -157,7 +158,8 @@ def render_objects(scr, bod, msk, per, coins, obstacle, bullets, magnets, boss, 
     for a_a in to_rem_s:
         snowballs.remove(a_a)
         del a_a
-
+    print(dragon.get_pos())
+    scr.add_to_screen(*(dragon.body()), dragon.get_pos())
     scr.printscreen()
 
 
@@ -210,6 +212,7 @@ def main():
         snowballs = []
         boss = Boss()
         per = Mandalorian()
+        dragon = Dragon()
         keypress = KBHit()
         bod, msk = per.body()
         pos = per.return_pos()
@@ -267,7 +270,7 @@ def main():
                     new_s = boss.shoot()
                     snowballs.append(new_s)
             render_objects(scr, bod, msk, per, coins,
-                           obstacles, bullets, magnets, boss, snowballs)
+                           obstacles, bullets, magnets, boss, snowballs, dragon)
             check_collisions(per, obstacles, magnets, coins,
                              bullets, boss, snowballs)
             time.sleep(SLEEP_TIME)
