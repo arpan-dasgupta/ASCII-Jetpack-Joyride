@@ -28,6 +28,7 @@ LIVES = 3
 CUR_TIME = 0
 MANUAL_MODE = 1
 BOSS_MODE = 1
+DRAGON_MODE = 1
 
 
 def reset():

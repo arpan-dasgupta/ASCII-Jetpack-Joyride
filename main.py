@@ -6,7 +6,7 @@ from background import Screen
 from boss import Boss
 from coins import random_coin_gen
 from collision import collision_checker
-from config import clear, tick, SLEEP_TIME, reset, MANUAL_MODE, BOSS_MODE
+from config import clear, tick, SLEEP_TIME, reset, MANUAL_MODE, BOSS_MODE, DRAGON_MODE
 from dragon import Dragon
 from hor_obstacles import obstacle_gen
 from kbhit import KBHit
@@ -72,8 +72,11 @@ def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs):
         coins.remove(coin)
 
 
-def update_objects(per, coins, obstacles, bullets, magnets, boss, snowballs):
-    per.move_down(1)
+def update_objects(per, coins, obstacles, bullets, magnets, boss, snowballs, dragon):
+    if not DRAGON_MODE:
+        per.move_down(1)
+    else:
+        dragon.move_up(1)
     for coin in coins:
         coin.update_pos()
     for obs in obstacles:
@@ -115,8 +118,10 @@ def render_objects(scr, bod, msk, per, coins, obstacle, bullets, magnets, boss, 
     for a_a in to_rem_m:
         magnets.remove(a_a)
         del a_a
-    pos = per.return_pos()
-    scr.add_to_screen(bod, msk, pos)
+    if not DRAGON_MODE:
+        scr.add_to_screen(bod, msk, per.return_pos())
+    else:
+        scr.add_to_screen(*(dragon.body()), dragon.get_pos())
     i = 0
     for obs in obstacle:
         if obs.get_pos()[1] <= 0:
@@ -158,8 +163,6 @@ def render_objects(scr, bod, msk, per, coins, obstacle, bullets, magnets, boss, 
     for a_a in to_rem_s:
         snowballs.remove(a_a)
         del a_a
-    print(dragon.get_pos())
-    scr.add_to_screen(*(dragon.body()), dragon.get_pos())
     scr.printscreen()
 
 
@@ -226,15 +229,23 @@ def main():
             if keypress.kbhit():
                 c_h = keypress.getch()
                 if c_h == 'w':
-                    per.move_up(3)
+                    if DRAGON_MODE:
+                        dragon.move_up(3)
+                    else:
+                        per.move_up(3)
                 elif c_h == 's':
-                    per.move_down(1)
+                    if DRAGON_MODE:
+                        dragon.move_down(3)
+                    else:
+                        per.move_down(1)
                 elif c_h == 'a':
-                    per.move_left(3)
+                    if not DRAGON_MODE:
+                        per.move_left(3)
                 elif c_h == 'd':
-                    per.move_right(3)
+                    if not DRAGON_MODE:
+                        per.move_right(3)
                 elif c_h == ' ':
-                    if len(bullets) < 3:
+                    if len(bullets) < 3 or DRAGON_MODE:
                         bullets.append(per.shoot())
                 elif c_h == '1':
                     new_c = random_coin_gen()
@@ -254,7 +265,7 @@ def main():
             clear()
             scr.clrscr()
             update_objects(per, coins, obstacles, bullets,
-                           magnets, boss, snowballs)
+                           magnets, boss, snowballs, dragon)
             if not (MANUAL_MODE or BOSS_MODE):
                 if np.random.random_sample()*(len(coins)+1) < 0.04:
                     new_c = random_coin_gen()
