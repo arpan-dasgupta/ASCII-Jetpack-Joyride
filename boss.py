@@ -1,5 +1,5 @@
 import numpy as np
-from colorama import Fore
+from colorama import Fore,Back
 from person import Person
 from config import SCREENHEIGHT, SCREENWIDTH
 from snowball import Snowball
@@ -29,7 +29,7 @@ class Boss(Person):
             [ [' '],[' '],['`'],['-'],['-'],['.'],['.'],['.'],['_'],['_'],['|'],['`'],['-'],['.'],['_'],[' '],[' '],['_'],['.'],['-'],['\''],['|'],['_'],['_'],['.'],['.'],['.'],['-'],['-'],['\''],[' '],[' '],],
             [ [' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],['|'],[' '],[' '],[' '],[' '],['`'],['\''],[' '],[' '],[' '],[' '],['|'],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],]]
             )
-        self.mask=np.full(np.shape(self.array),Fore.BLACK)
+        self.mask=np.full(np.shape(self.array),Back.BLACK+Fore.WHITE)
 
     def update_pos(self,player_pos):
         if player_pos[0]<self.cur_pos[0]:

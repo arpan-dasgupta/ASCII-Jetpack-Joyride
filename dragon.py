@@ -1,4 +1,5 @@
 from colorama import Fore
+from bullet import Bullet
 import numpy as np
 from person import Person
 import config
@@ -6,12 +7,11 @@ import config
 
 class Dragon(Person):
 
-    cur_pos = [0, 0]
     stages = []
     ud_stages = []
     mask = np.array([])
     alt_mask = np.array([])
-    call_count=0
+    call_count = 0
     countdir = 1
     last_vals = [0,0,0,0,0]
 
@@ -32,6 +32,9 @@ class Dragon(Person):
         return self.stages[self.call_count],self.mask
 
     def get_pos(self):
+        return self.cur_pos
+
+    def return_pos(self):
         return self.cur_pos
 
     def __init__(self):
@@ -99,6 +102,13 @@ class Dragon(Person):
         initial -= self.cur_pos[0]
         self.last_vals.pop(0)
         self.last_vals.append(initial)
+
+    def shoot(self):
+        bullet = Bullet([self.cur_pos[0],self.cur_pos[1]+np.shape(self.stages[0])[1]])
+        return bullet
+
+    def attract(self,pos,range):
+        pass
     
 
 

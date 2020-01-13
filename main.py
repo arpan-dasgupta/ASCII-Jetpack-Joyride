@@ -16,7 +16,9 @@ from snowball import Snowball
 import config
 
 
-def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs):
+def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs, dragon):
+    if DRAGON_MODE:
+        per = dragon
     to_rem_o = []
     for obstacle in obstacles:
         flag = 0
@@ -70,6 +72,20 @@ def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs):
             config.SCORE += coin.get_val()
     for coin in to_rem_c:
         coins.remove(coin)
+    to_rem_s = set()
+    to_rem_b = set()
+    for snowball in snowballs:
+        for bullet in bullets:
+            part3, _ = bullet.body()
+            part1, _ = snowball.body()
+            if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
+                    np.shape(part3)[0], np.shape(part3)[1]], snowball.get_pos(), bullet.get_pos()):
+                to_rem_b.add(bullet)
+                to_rem_s.add(snowball)
+    for snow in to_rem_s:
+        snowballs.remove(snow)
+    for bull in to_rem_b:
+        bullets.remove(bull)
 
 
 def update_objects(per, coins, obstacles, bullets, magnets, boss, snowballs, dragon):
@@ -77,6 +93,8 @@ def update_objects(per, coins, obstacles, bullets, magnets, boss, snowballs, dra
         per.move_down(1)
     else:
         dragon.move_up(1)
+    if DRAGON_MODE:
+        per = dragon
     for coin in coins:
         coin.update_pos()
     for obs in obstacles:
@@ -246,7 +264,10 @@ def main():
                         per.move_right(3)
                 elif c_h == ' ':
                     if len(bullets) < 3 or DRAGON_MODE:
-                        bullets.append(per.shoot())
+                        if not DRAGON_MODE:
+                            bullets.append(per.shoot())
+                        else:
+                            bullets.append(dragon.shoot())
                 elif c_h == '1':
                     new_c = random_coin_gen()
                     coins.extend(new_c)
@@ -283,7 +304,7 @@ def main():
             render_objects(scr, bod, msk, per, coins,
                            obstacles, bullets, magnets, boss, snowballs, dragon)
             check_collisions(per, obstacles, magnets, coins,
-                             bullets, boss, snowballs)
+                             bullets, boss, snowballs, dragon)
             time.sleep(SLEEP_TIME)
 
 
