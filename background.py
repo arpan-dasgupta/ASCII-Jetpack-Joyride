@@ -29,7 +29,7 @@ class Screen:
                              [j][0] + Style.RESET_ALL)
             to_print += '\n'
         to_print += ("Score - "+str(config.SCORE) +
-                     "\n TIME - " + str(config.TIMER) + "\n Lives - " + str(config.LIVES)+"\n")
+                     "\t TIME - " + str(config.TIMER) + "\t Lives - " + str(config.LIVES)+"\n")
         print(to_print)
 
     def clrscr(self):

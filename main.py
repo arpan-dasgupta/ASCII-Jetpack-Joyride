@@ -90,7 +90,8 @@ def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs, d
 
 def update_objects(per, coins, obstacles, bullets, magnets, boss, snowballs, dragon):
     if not DRAGON_MODE:
-        per.move_down(1)
+        # per.move_down(1)
+        per.update_pos()
     else:
         dragon.move_up(1)
     if DRAGON_MODE:
@@ -250,7 +251,7 @@ def main():
                     if DRAGON_MODE:
                         dragon.move_up(3)
                     else:
-                        per.move_up(3)
+                        per.move_up(2)
                 elif c_h == 's':
                     if DRAGON_MODE:
                         dragon.move_down(3)
@@ -280,6 +281,9 @@ def main():
                 elif c_h == '4':
                     new_s = boss.shoot()
                     snowballs.append(new_s)
+                elif c_h == 'h':
+                    if not DRAGON_MODE:
+                        per.shield_activate()
                 else:
                     died = 1
                     break
