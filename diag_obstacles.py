@@ -18,7 +18,7 @@ class DiagObstacle(Moving):
             else:
                 obj = Obstacle(1, [inipos[0]+size-1-i, inipos[1]+i])
             self.ele.append(obj)
-        self.array = np.full((size, 1, 1), 'Z')
+        self.array = np.full((size, 1, 1), '🔥')
         self.msk = np.full(np.shape(self.array), Fore.RED)
 
     def update_pos(self):

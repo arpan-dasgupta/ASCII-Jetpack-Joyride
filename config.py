@@ -29,6 +29,7 @@ CUR_TIME = 0
 MANUAL_MODE = 1
 BOSS_MODE = 1
 DRAGON_MODE = 0
+SPEED_UP = 0
 
 
 def reset():
@@ -51,6 +52,11 @@ def tick():
 def clear():
     # _ = os.system('clear')
     print('\033[0;0H')
+
+
+def clear_2():
+    _ = os.system('clear')
+    # print('\033[0;0H')
 
 
 if __name__ == "__main__":

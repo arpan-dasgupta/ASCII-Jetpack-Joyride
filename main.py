@@ -6,7 +6,7 @@ from background import Screen
 from boss import Boss
 from coins import random_coin_gen
 from collision import collision_checker
-from config import clear, tick, SLEEP_TIME, reset, MANUAL_MODE, BOSS_MODE, DRAGON_MODE
+from config import clear, tick, SLEEP_TIME, reset, clear_2
 from dragon import Dragon
 from hor_obstacles import obstacle_gen
 from kbhit import KBHit
@@ -17,7 +17,7 @@ import config
 
 
 def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs, dragon):
-    if DRAGON_MODE:
+    if config.DRAGON_MODE:
         per = dragon
     to_rem_o = []
     for obstacle in obstacles:
@@ -42,19 +42,25 @@ def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs, d
         part1, _ = snowball.body()
         if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
                 np.shape(part3)[0], np.shape(part3)[1]], snowball.get_pos(), per.return_pos()):
-            exit()
+            if not config.DRAGON_MODE and per.shield_status()[0] == 1:
+                per.shield_deactivate()
+                continue
+            return -1
     part3, _ = per.body()
     part1, _ = boss.body()
     if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
             np.shape(part3)[0], np.shape(part3)[1]], boss.get_pos(), per.return_pos()):
-        exit()
+        if not config.DRAGON_MODE and per.shield_status()[0] == 1:
+            per.shield_deactivate()
+        else:
+            return -1
 
     for bullet in bullets:
         part3, _ = bullet.body()
         part1, _ = boss.body()
         if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
                 np.shape(part3)[0], np.shape(part3)[1]], boss.get_pos(), bullet.get_pos()):
-            exit()
+            return -1
 
     for obstacle in obstacles:
         obs = obstacle.body()
@@ -63,7 +69,10 @@ def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs, d
             part1, _, pos = indiv
             if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
                     np.shape(part3)[0], np.shape(part3)[1]], pos, per.return_pos()):
-                exit()
+                if not config.DRAGON_MODE and per.shield_status()[0] == 1:
+                    per.shield_deactivate()
+                    continue
+                return -1
     to_rem_c = []
     part3, _ = per.body()
     for coin in coins:
@@ -86,15 +95,15 @@ def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs, d
         snowballs.remove(snow)
     for bull in to_rem_b:
         bullets.remove(bull)
+    return 1
 
 
 def update_objects(per, coins, obstacles, bullets, magnets, boss, snowballs, dragon):
-    if not DRAGON_MODE:
-        # per.move_down(1)
+    if not config.DRAGON_MODE:
         per.update_pos()
     else:
         dragon.move_up(1)
-    if DRAGON_MODE:
+    if config.DRAGON_MODE:
         per = dragon
     for coin in coins:
         coin.update_pos()
@@ -110,7 +119,7 @@ def update_objects(per, coins, obstacles, bullets, magnets, boss, snowballs, dra
     boss.update_pos(per.return_pos())
 
 
-def render_objects(scr, bod, msk, per, coins, obstacle, bullets, magnets, boss, snowballs, dragon):
+def render_objects(scr,  per, coins, obstacle, bullets, magnets, boss, snowballs, dragon):
     to_rem_c = []
     to_rem_o = []
     to_rem_m = []
@@ -137,8 +146,8 @@ def render_objects(scr, bod, msk, per, coins, obstacle, bullets, magnets, boss, 
     for a_a in to_rem_m:
         magnets.remove(a_a)
         del a_a
-    if not DRAGON_MODE:
-        scr.add_to_screen(bod, msk, per.return_pos())
+    if not config.DRAGON_MODE:
+        scr.add_to_screen(*(per.body()), per.return_pos())
     else:
         scr.add_to_screen(*(dragon.body()), dragon.get_pos())
     i = 0
@@ -147,14 +156,10 @@ def render_objects(scr, bod, msk, per, coins, obstacle, bullets, magnets, boss, 
             to_rem_o.append(obs)
             continue
         our_list = obs.body()
-        # print(our_list)
-        # exit()
         for a_a in our_list:
             f_f1, f_f2, poses = a_a
-            # print(f_f1, f_f2, poses)
             scr.add_to_screen(f_f1, f_f2, poses)
         i += 1
-        # exit()
     for a_a in to_rem_o:
         obstacle.remove(a_a)
         del a_a
@@ -182,90 +187,53 @@ def render_objects(scr, bod, msk, per, coins, obstacle, bullets, magnets, boss, 
     for a_a in to_rem_s:
         snowballs.remove(a_a)
         del a_a
-    scr.printscreen()
+    scr.printscreen(per.shield_status())
 
 
 def main():
-    global MANUAL_MODE
-    global BOSS_MODE
     scr = Screen()
-    # lives = 3
-    playing = 1
-    # coins_collected = 0
+    config.LIVES = 3
     died = 0
     reset()
-    while playing == 1:
+    while config.LIVES > 0:
         if died == 1:
-            # if lives != 0:
-            #     died = 0
-            #     destroy(per)
-            #     time.sleep(2)
-            #     # create_map()
-            # else:
             clear()
-            print(Back.WHITE + Fore.BLACK +
-                  """┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼
-                    ███▀▀▀██┼███▀▀▀███┼███▀█▄█▀███┼██▀▀▀
-                    ██┼┼┼┼██┼██┼┼┼┼┼██┼██┼┼┼█┼┼┼██┼██┼┼┼
-                    ██┼┼┼▄▄▄┼██▄▄▄▄▄██┼██┼┼┼▀┼┼┼██┼██▀▀▀
-                    ██┼┼┼┼██┼██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██┼┼┼
-                    ███▄▄▄██┼██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██▄▄▄
-                    ┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼
-                    ███▀▀▀███┼▀███┼┼██▀┼██▀▀▀┼██▀▀▀▀██▄┼
-                    ██┼┼┼┼┼██┼┼┼██┼┼██┼┼██┼┼┼┼██┼┼┼┼┼██┼
-                    ██┼┼┼┼┼██┼┼┼██┼┼██┼┼██▀▀▀┼██▄▄▄▄▄▀▀┼
-                    ██┼┼┼┼┼██┼┼┼██┼┼█▀┼┼██┼┼┼┼██┼┼┼┼┼██┼
-                    ███▄▄▄███┼┼┼─▀█▀┼┼─┼██▄▄▄┼██┼┼┼┼┼██▄
-                    ┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼
-                    ┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼
-                    ┼┼┼┼┼┼████▄┼┼┼▄▄▄▄▄▄▄┼┼┼▄████┼┼┼┼┼┼┼
-                    ┼┼┼┼┼┼┼┼┼▀▀█▄█████████▄█▀▀┼┼┼┼┼┼┼┼┼┼
-                    ┼┼┼┼┼┼┼┼┼┼┼█████████████┼┼┼┼┼┼┼┼┼┼┼┼
-                    ┼┼┼┼┼┼┼┼┼┼┼██▀▀▀███▀▀▀██┼┼┼┼┼┼┼┼┼┼┼┼
-                    ┼┼┼┼┼┼┼┼┼┼┼██┼┼┼███┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼
-                    ┼┼┼┼┼┼┼┼┼┼┼█████▀▄▀█████┼┼┼┼┼┼┼┼┼┼┼┼
-                    ┼┼┼┼┼┼┼┼┼┼┼┼███████████┼┼┼┼┼┼┼┼┼┼┼┼┼
-                    ┼┼┼┼┼┼┼┼▄▄▄██┼┼█▀█▀█┼┼██▄▄▄┼┼┼┼┼┼┼┼┼
-                    ┼┼┼┼┼┼┼┼▀▀██┼┼┼┼┼┼┼┼┼┼┼██▀▀┼┼┼┼┼┼┼┼┼
-                    ┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼
-                    ┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼
-                    """)
-            sys.exit()
+            died = 0
+            time.sleep(2)
         snowballs = []
         boss = Boss()
         per = Mandalorian()
         dragon = Dragon()
         keypress = KBHit()
-        bod, msk = per.body()
         pos = per.return_pos()
         coins = []
         obstacles = []
         bullets = []
         magnets = []
-        scr.add_to_screen(bod, msk, pos)
+        scr.add_to_screen(*(per.body()), pos)
         while True:
             tick()
             if keypress.kbhit():
                 c_h = keypress.getch()
                 if c_h == 'w':
-                    if DRAGON_MODE:
+                    if config.DRAGON_MODE:
                         dragon.move_up(3)
                     else:
                         per.move_up(2)
                 elif c_h == 's':
-                    if DRAGON_MODE:
+                    if config.DRAGON_MODE:
                         dragon.move_down(3)
                     else:
                         per.move_down(1)
                 elif c_h == 'a':
-                    if not DRAGON_MODE:
+                    if not config.DRAGON_MODE:
                         per.move_left(3)
                 elif c_h == 'd':
-                    if not DRAGON_MODE:
+                    if not config.DRAGON_MODE:
                         per.move_right(3)
                 elif c_h == ' ':
-                    if len(bullets) < 3 or DRAGON_MODE:
-                        if not DRAGON_MODE:
+                    if len(bullets) < 3 or config.DRAGON_MODE:
+                        if not config.DRAGON_MODE:
                             bullets.append(per.shoot())
                         else:
                             bullets.append(dragon.shoot())
@@ -281,17 +249,23 @@ def main():
                 elif c_h == '4':
                     new_s = boss.shoot()
                     snowballs.append(new_s)
+                elif c_h == 'y':
+                    config.DRAGON_MODE = 1 - config.DRAGON_MODE
                 elif c_h == 'h':
-                    if not DRAGON_MODE:
+                    if not config.DRAGON_MODE:
                         per.shield_activate()
-                else:
+                elif c_h == 'g':
+                    if not config.DRAGON_MODE:
+                        per.speed_up()
+                elif c_h == 'q':
                     died = 1
+                    config.LIVES = 0
                     break
             clear()
             scr.clrscr()
             update_objects(per, coins, obstacles, bullets,
                            magnets, boss, snowballs, dragon)
-            if not (MANUAL_MODE or BOSS_MODE):
+            if not (config.MANUAL_MODE or config.BOSS_MODE):
                 if np.random.random_sample()*(len(coins)+1) < 0.04:
                     new_c = random_coin_gen()
                     coins.extend(new_c)
@@ -301,15 +275,47 @@ def main():
                 if np.random.random_sample()*(500*len(magnets)+1) < 0.04:
                     new_m = magnet_spawner()
                     magnets.append(new_m)
-            if BOSS_MODE and (not MANUAL_MODE):
+            if config.BOSS_MODE and (not config.MANUAL_MODE):
                 if np.random.random_sample()*len(snowballs) < 0.06:
                     new_s = boss.shoot()
                     snowballs.append(new_s)
-            render_objects(scr, bod, msk, per, coins,
+            render_objects(scr, per, coins,
                            obstacles, bullets, magnets, boss, snowballs, dragon)
-            check_collisions(per, obstacles, magnets, coins,
-                             bullets, boss, snowballs, dragon)
+            if check_collisions(per, obstacles, magnets, coins,
+                                bullets, boss, snowballs, dragon) == -1:
+                died = 1
+                config.LIVES -= 1
+                break
             time.sleep(SLEEP_TIME)
+    clear_2()
+    print(Back.WHITE + Fore.BLACK +
+          """┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼
+            ███▀▀▀██┼███▀▀▀███┼███▀█▄█▀███┼██▀▀▀
+            ██┼┼┼┼██┼██┼┼┼┼┼██┼██┼┼┼█┼┼┼██┼██┼┼┼
+            ██┼┼┼▄▄▄┼██▄▄▄▄▄██┼██┼┼┼▀┼┼┼██┼██▀▀▀
+            ██┼┼┼┼██┼██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██┼┼┼
+            ███▄▄▄██┼██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██▄▄▄
+            ┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼
+            ███▀▀▀███┼▀███┼┼██▀┼██▀▀▀┼██▀▀▀▀██▄┼
+            ██┼┼┼┼┼██┼┼┼██┼┼██┼┼██┼┼┼┼██┼┼┼┼┼██┼
+            ██┼┼┼┼┼██┼┼┼██┼┼██┼┼██▀▀▀┼██▄▄▄▄▄▀▀┼
+            ██┼┼┼┼┼██┼┼┼██┼┼█▀┼┼██┼┼┼┼██┼┼┼┼┼██┼
+            ███▄▄▄███┼┼┼─▀█▀┼┼─┼██▄▄▄┼██┼┼┼┼┼██▄
+            ┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼
+            ┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼
+            ┼┼┼┼┼┼████▄┼┼┼▄▄▄▄▄▄▄┼┼┼▄████┼┼┼┼┼┼┼
+            ┼┼┼┼┼┼┼┼┼▀▀█▄█████████▄█▀▀┼┼┼┼┼┼┼┼┼┼
+            ┼┼┼┼┼┼┼┼┼┼┼█████████████┼┼┼┼┼┼┼┼┼┼┼┼
+            ┼┼┼┼┼┼┼┼┼┼┼██▀▀▀███▀▀▀██┼┼┼┼┼┼┼┼┼┼┼┼
+            ┼┼┼┼┼┼┼┼┼┼┼██┼┼┼███┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼
+            ┼┼┼┼┼┼┼┼┼┼┼█████▀▄▀█████┼┼┼┼┼┼┼┼┼┼┼┼
+            ┼┼┼┼┼┼┼┼┼┼┼┼███████████┼┼┼┼┼┼┼┼┼┼┼┼┼
+            ┼┼┼┼┼┼┼┼▄▄▄██┼┼█▀█▀█┼┼██▄▄▄┼┼┼┼┼┼┼┼┼
+            ┼┼┼┼┼┼┼┼▀▀██┼┼┼┼┼┼┼┼┼┼┼██▀▀┼┼┼┼┼┼┼┼┼
+            ┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼
+            ┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼
+            """)
+    print("YOUR SCORE - " + str(config.SCORE))
 
 
 if __name__ == '__main__':

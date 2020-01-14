@@ -1,8 +1,9 @@
-from colorama import Fore
+from colorama import Fore, Back
 import numpy as np
 from bullet import Bullet
 from config import SCREENWIDTH, SCREENHEIGHT
 from person import Person
+import config
 
 
 class Mandalorian(Person):
@@ -11,6 +12,13 @@ class Mandalorian(Person):
     velocity = [0, 0]
     shield_timer = 20
     shield_activated = 0
+    speed_timer = 20
+    shield_cooldown = 300
+
+    def __init__(self):
+        self.cur_pos = [0, 0]
+        self.shield_cooldown = 10
+        self.shield_timer = 0
 
     def attack(self):
         pass
@@ -41,14 +49,16 @@ class Mandalorian(Person):
         return self.cur_pos
 
     def shield_activate(self):
-        self.shield_timer = 20
+        if self.shield_cooldown != 0:
+            return
+        self.shield_timer = 60
         self.shield_activated = 1
 
     def shield_status(self):
-        return self.shield_activated
+        return [self.shield_activated, self.shield_cooldown if not self.shield_activated else self.shield_timer]
 
     def shield_deactivate(self):
-        self.shield_timer = 3
+        self.shield_timer = 6
 
     def update_pos(self):
         self.cur_pos[0] = max(0, min(SCREENHEIGHT-self.dim[0],
@@ -57,9 +67,21 @@ class Mandalorian(Person):
             self.velocity[0] = 0
         self.velocity[0] += 1
         if self.shield_timer == 0:
+            self.shield_cooldown = max(self.shield_cooldown-1, 0)
             self.shield_activated = 0
         else:
             self.shield_timer -= 1
+            if self.shield_timer == 0:
+                self.shield_cooldown = 50
+                self.shield_activated = 0
+        if self.speed_timer == 0:
+            config.SPEED_UP = 0
+        else:
+            self.speed_timer -= 1
+
+    def speed_up(self):
+        config.SPEED_UP = 1
+        self.speed_timer = 20
 
     def move_up(self, val):
         self.velocity[0] -= val
@@ -118,5 +140,10 @@ class Mandalorian(Person):
                            [' '],
                            [' '],
                            ]])
-        msk = np.full(np.shape(array), Fore.BLACK)
+        if self.shield_activated == 1:
+            msk = np.full(np.shape(array), Back.BLACK + Fore.WHITE)
+        elif config.SPEED_UP:
+            msk = np.full(np.shape(array), Back.RED)
+        else:
+            msk = np.full(np.shape(array), Fore.BLACK)
         return array, msk
