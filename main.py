@@ -55,13 +55,18 @@ def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs, d
             per.shield_deactivate()
         else:
             return -1
-
+    to_rem_b = []
     for bullet in bullets:
         part3, _ = bullet.body()
         part1, _ = boss.body()
         if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
                 np.shape(part3)[0], np.shape(part3)[1]], boss.get_pos(), bullet.get_pos()):
-            return -1
+            boss.get_hit()
+            to_rem_b.append(bullet)
+            if boss.get_lives() == 0:
+                return 2
+    for bull in to_rem_b:
+        bullets.remove(bull)
 
     for obstacle in obstacles:
         obs = obstacle.body()
@@ -202,7 +207,7 @@ def render_objects(scr,  per, coins, obstacle, bullets, magnets, boss, snowballs
     for a_a in to_rem_s:
         snowballs.remove(a_a)
         del a_a
-    scr.printscreen(per.shield_status())
+    scr.printscreen(per.shield_status(), boss.get_lives())
 
 
 def main():
@@ -247,7 +252,7 @@ def main():
                 elif c_h == 'd':
                     if not config.DRAGON_MODE:
                         per.move_right(3)
-                elif c_h == ' ':
+                elif c_h == 'f':
                     if len(bullets) < 3 or config.DRAGON_MODE:
                         if not config.DRAGON_MODE:
                             bullets.append(per.shoot())
@@ -270,7 +275,7 @@ def main():
                     scenes.append(new_s)
                 elif c_h == 'y':
                     config.DRAGON_MODE = 1 - config.DRAGON_MODE
-                elif c_h == 'h':
+                elif c_h == ' ':
                     if not config.DRAGON_MODE:
                         per.shield_activate()
                 elif c_h == 'g':
@@ -303,11 +308,16 @@ def main():
                     snowballs.append(new_s)
             render_objects(scr, per, coins,
                            obstacles, bullets, magnets, boss, snowballs, dragon, scenes)
-            if check_collisions(per, obstacles, magnets, coins,
-                                bullets, boss, snowballs, dragon) == -1:
+            stat = check_collisions(per, obstacles, magnets, coins,
+                                    bullets, boss, snowballs, dragon)
+            if stat == -1:
                 died = 1
                 config.LIVES -= 1
                 break
+            if stat == 2:
+                clear_2
+                print("YOU WIN!")
+                exit()
             time.sleep(SLEEP_TIME)
     clear_2()
     print(Back.WHITE + Fore.BLACK +

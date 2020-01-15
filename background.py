@@ -32,7 +32,7 @@ class Screen:
             # self.color_mask[np.max(start[0], 0):np.max(np.min(start[0] +
             #                                                   np.shape(obj)[0], SCREENHEIGHT), 0), np.max(start[1], 0):np.max(np.min(start[1] + np.shape(obj)[1], SCREENWIDTH), 0)] = col_m[:, max(0, -start[0]):min(np.shape(obj)[0], SCREENWIDTH-start[1])]
 
-    def printscreen(self, shield_status):
+    def printscreen(self, shield_status, boss_lives):
         print(Style.BRIGHT, end='')
         to_print = ""
         for i in range(SCREENHEIGHT+3):
@@ -44,10 +44,23 @@ class Screen:
                      "\t TIME - " + str(config.TIMER) + "\t Lives - " + str(config.LIVES)+"\t")
         if shield_status[0] == 1:
             to_print += ("Shield active for time -  " +
-                         str(shield_status[1])+"\n")
+                         str(shield_status[1]) + '\t')
         else:
             to_print += ("Cooldown time for shield - " +
-                         str(shield_status[1])+'\n')
+                         str(shield_status[1]) + '\t')
+        if config.SPEED_UP:
+            to_print += ("SPEED BOOST - ACTIVE  \n")
+        else:
+            to_print += ("SPEED BOOST - INACTIVE\n")
+
+        # to_print += ("[")
+        # for i in range(20):
+        #     if boss_lives > i:
+        #         to_print += ("#")
+        #     else:
+        #         to_print += (" ")
+
+        # to_print += ("]\n")
         print(to_print)
 
     def clrscr(self):
