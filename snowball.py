@@ -25,12 +25,13 @@ class Snowball(Moving):
 
     def update_pos(self, player_pos):
         self.cur_pos[1] -= 2
+        print(player_pos[0], self.cur_pos[0])
         if player_pos[0] < self.cur_pos[0]:
             self.cur_pos[0] -= (np.random.random_sample() < self.diff)
-        elif player_pos[0] > self.cur_pos[0]+2:
+        elif player_pos[0] > self.cur_pos[0]:
             self.cur_pos[0] += (np.random.random_sample() < self.diff)
-        if self.cur_pos[0] + 2 > SCREENHEIGHT:
-            self.cur_pos[0] = SCREENHEIGHT - 2
+        if self.cur_pos[0] + 1 > SCREENHEIGHT:
+            self.cur_pos[0] = SCREENHEIGHT - 1
 
 
 if __name__ == "__main__":

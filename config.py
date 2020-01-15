@@ -7,7 +7,7 @@ import termios
 
 SCREENHEIGHT = 31
 SCREENWIDTH = 147
-SLEEP_TIME = 0.175
+SLEEP_TIME = 0.125
 
 
 def getchar():
@@ -27,7 +27,7 @@ SCORE = 0
 LIVES = 3
 CUR_TIME = 0
 MANUAL_MODE = 0
-BOSS_MODE = 0
+BOSS_MODE = 1
 DRAGON_MODE = 2
 SPEED_UP = 0
 

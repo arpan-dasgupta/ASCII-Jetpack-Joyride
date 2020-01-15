@@ -14,13 +14,16 @@ class HorObstacle(Obstacle):
 
 
 def obstacle_gen():
-    baseh = np.random.randint(0, SCREENHEIGHT - 10)
+    baseh = np.random.randint(0, SCREENHEIGHT - 7)
     key_val = np.random.randint(0, 3)
     if key_val == 1:
         obs = Obstacle(np.random.randint(4, 7), [baseh, SCREENWIDTH-1])
     elif key_val == 0:
         obs = DiagObstacle(np.random.randint(
             4, 7), [baseh, SCREENWIDTH-8], np.random.randint(0, 2))
+        # fd = open("log.txt", 'a')
+        # fd.write(str(obs)+'\n')
+        # fd.close()
     else:
         obs = HorObstacle(np.random.randint(7, 10), [baseh, SCREENWIDTH-11])
 
