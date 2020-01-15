@@ -18,7 +18,7 @@ import config
 
 
 def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs, dragon):
-    if config.DRAGON_MODE:
+    if config.DRAGON_MODE == 1:
         per = dragon
     to_rem_o = []
     for obstacle in obstacles:
@@ -43,30 +43,31 @@ def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs, d
         part1, _ = snowball.body()
         if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
                 np.shape(part3)[0], np.shape(part3)[1]], snowball.get_pos(), per.return_pos()):
-            if not config.DRAGON_MODE and per.shield_status()[0] == 1:
+            if not config.DRAGON_MODE == 1 and per.shield_status()[0] == 1:
                 per.shield_deactivate()
                 continue
             return -1
     part3, _ = per.body()
-    part1, _ = boss.body()
-    if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
-            np.shape(part3)[0], np.shape(part3)[1]], boss.get_pos(), per.return_pos()):
-        if not config.DRAGON_MODE and per.shield_status()[0] == 1:
-            per.shield_deactivate()
-        else:
-            return -1
-    to_rem_b = []
-    for bullet in bullets:
-        part3, _ = bullet.body()
+    if config.BOSS_MODE:
         part1, _ = boss.body()
         if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
-                np.shape(part3)[0], np.shape(part3)[1]], boss.get_pos(), bullet.get_pos()):
-            boss.get_hit()
-            to_rem_b.append(bullet)
-            if boss.get_lives() == 0:
-                return 2
-    for bull in to_rem_b:
-        bullets.remove(bull)
+                np.shape(part3)[0], np.shape(part3)[1]], boss.get_pos(), per.return_pos()):
+            if not config.DRAGON_MODE == 1 and per.shield_status()[0] == 1:
+                per.shield_deactivate()
+            else:
+                return -1
+        to_rem_b = []
+        for bullet in bullets:
+            part3, _ = bullet.body()
+            part1, _ = boss.body()
+            if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
+                    np.shape(part3)[0], np.shape(part3)[1]], boss.get_pos(), bullet.get_pos()):
+                boss.get_hit()
+                to_rem_b.append(bullet)
+                if boss.get_lives() == 0:
+                    return 2
+        for bull in to_rem_b:
+            bullets.remove(bull)
 
     for obstacle in obstacles:
         obs = obstacle.body()
@@ -75,7 +76,7 @@ def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs, d
             part1, _, pos = indiv
             if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
                     np.shape(part3)[0], np.shape(part3)[1]], pos, per.return_pos()):
-                if not config.DRAGON_MODE and per.shield_status()[0] == 1:
+                if not config.DRAGON_MODE == 1 and per.shield_status()[0] == 1:
                     per.shield_deactivate()
                     continue
                 return -1
@@ -105,11 +106,11 @@ def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs, d
 
 
 def update_objects(per, coins, obstacles, bullets, magnets, boss, snowballs, dragon, scenes):
-    if not config.DRAGON_MODE:
+    if not config.DRAGON_MODE == 1:
         per.update_pos()
     else:
         dragon.move_up(1)
-    if config.DRAGON_MODE:
+    if config.DRAGON_MODE == 1:
         per = dragon
     for coin in coins:
         coin.update_pos()
@@ -124,7 +125,8 @@ def update_objects(per, coins, obstacles, bullets, magnets, boss, snowballs, dra
         per.attract(mag.get_pos(), mag.get_range())
     for scene in scenes:
         scene.update_pos()
-    boss.update_pos(per.return_pos())
+    if config.BOSS_MODE:
+        boss.update_pos(per.return_pos())
 
 
 def render_objects(scr,  per, coins, obstacle, bullets, magnets, boss, snowballs, dragon, scenes):
@@ -166,7 +168,7 @@ def render_objects(scr,  per, coins, obstacle, bullets, magnets, boss, snowballs
     for a_a in to_rem_m:
         magnets.remove(a_a)
         del a_a
-    if not config.DRAGON_MODE:
+    if not config.DRAGON_MODE == 1:
         scr.add_to_screen(*(per.body()), per.return_pos())
     else:
         scr.add_to_screen(*(dragon.body()), dragon.get_pos())
@@ -195,7 +197,8 @@ def render_objects(scr,  per, coins, obstacle, bullets, magnets, boss, snowballs
     for a_a in to_rem_b:
         bullets.remove(a_a)
         del a_a
-    scr.add_to_screen(*(boss.body()), boss.get_pos())
+    if config.BOSS_MODE:
+        scr.add_to_screen(*(boss.body()), boss.get_pos())
     i = 0
     for snowball in snowballs:
         f_f1, f_f2 = snowball.body()
@@ -207,7 +210,7 @@ def render_objects(scr,  per, coins, obstacle, bullets, magnets, boss, snowballs
     for a_a in to_rem_s:
         snowballs.remove(a_a)
         del a_a
-    scr.printscreen(per.shield_status(), boss.get_lives())
+    scr.printscreen(per.shield_status())
 
 
 def main():
@@ -237,24 +240,24 @@ def main():
             if keypress.kbhit():
                 c_h = keypress.getch()
                 if c_h == 'w':
-                    if config.DRAGON_MODE:
+                    if config.DRAGON_MODE == 1:
                         dragon.move_up(3)
                     else:
                         per.move_up(2)
                 elif c_h == 's':
-                    if config.DRAGON_MODE:
+                    if config.DRAGON_MODE == 1:
                         dragon.move_down(3)
                     else:
                         per.move_down(1)
                 elif c_h == 'a':
-                    if not config.DRAGON_MODE:
+                    if not config.DRAGON_MODE == 1:
                         per.move_left(3)
                 elif c_h == 'd':
-                    if not config.DRAGON_MODE:
+                    if not config.DRAGON_MODE == 1:
                         per.move_right(3)
                 elif c_h == 'f':
-                    if len(bullets) < 3 or config.DRAGON_MODE:
-                        if not config.DRAGON_MODE:
+                    if len(bullets) < 3 or config.DRAGON_MODE == 1:
+                        if not config.DRAGON_MODE == 1:
                             bullets.append(per.shoot())
                         else:
                             bullets.append(dragon.shoot())
@@ -268,18 +271,24 @@ def main():
                     new_m = magnet_spawner()
                     magnets.append(new_m)
                 elif c_h == '4':
-                    new_s = boss.shoot()
-                    snowballs.append(new_s)
+                    if config.BOSS_MODE:
+                        new_s = boss.shoot()
+                        snowballs.append(new_s)
                 elif c_h == '5':
                     new_s = Scenery()
                     scenes.append(new_s)
+                elif c_h == '6':
+                    config.BOSS_MODE = 1-config.BOSS_MODE
                 elif c_h == 'y':
-                    config.DRAGON_MODE = 1 - config.DRAGON_MODE
+                    if config.DRAGON_MODE == 2:
+                        config.DRAGON_MODE = 1
+                    elif config.DRAGON_MODE == 1:
+                        config.DRAGON_MODE = 2
                 elif c_h == ' ':
-                    if not config.DRAGON_MODE:
+                    if not config.DRAGON_MODE == 1:
                         per.shield_activate()
                 elif c_h == 'g':
-                    if not config.DRAGON_MODE:
+                    if not config.DRAGON_MODE == 1:
                         per.speed_up()
                 elif c_h == 'q':
                     died = 1
@@ -293,17 +302,17 @@ def main():
                 if np.random.random_sample()*(len(coins)+1) < 0.04:
                     new_c = random_coin_gen()
                     coins.extend(new_c)
-                if np.random.random_sample()*(len(obstacles)+1) < 0.04:
+                if np.random.random_sample()*np.sqrt((len(obstacles)+1)) < 0.17:
                     new_o = obstacle_gen()
                     obstacles.append(new_o)
                 if np.random.random_sample()*(500*len(magnets)+1) < 0.04:
                     new_m = magnet_spawner()
                     magnets.append(new_m)
-                if np.random.random_sample()*(len(scenes) <= 1) < 0.96:
-                    new_s = Scenery()
-                    scenes.append(new_s)
+            if not config.MANUAL_MODE and np.random.random_sample()*(len(scenes) < 2) > 0.96:
+                new_s = Scenery()
+                scenes.append(new_s)
             if config.BOSS_MODE and (not config.MANUAL_MODE):
-                if np.random.random_sample()*len(snowballs) < 0.06:
+                if np.random.random_sample()*np.sqrt(len(snowballs)) < 0.1:
                     new_s = boss.shoot()
                     snowballs.append(new_s)
             render_objects(scr, per, coins,
@@ -311,9 +320,12 @@ def main():
             stat = check_collisions(per, obstacles, magnets, coins,
                                     bullets, boss, snowballs, dragon)
             if stat == -1:
-                died = 1
-                config.LIVES -= 1
-                break
+                if config.DRAGON_MODE != 1:
+                    died = 1
+                    config.LIVES -= 1
+                    break
+                else:
+                    config.DRAGON_MODE = 0
             if stat == 2:
                 clear_2
                 print("YOU WIN!")

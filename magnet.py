@@ -13,6 +13,10 @@ class Magnet(Moving):
 
     def body(self):
         self.arr = np.full((5, 5, 1), 'M')
+        self.arr[0, 2] = ' '
+        self.arr[1, 2] = ' '
+        self.arr[2, 2] = ' '
+        self.arr[3, 2] = ' '
         self.msk = np.full((5, 5, 1), Fore.LIGHTBLACK_EX)
         return self.arr, self.msk
 

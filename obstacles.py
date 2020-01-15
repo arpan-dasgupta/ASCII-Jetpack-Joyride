@@ -5,12 +5,12 @@ from moving import Moving
 
 class Obstacle(Moving):
 
-    array = np.full((np.random.randint(4, 7), 1, 1), '🔥')
+    array = np.full((np.random.randint(4, 7), 1, 1), '#')
     msk = np.full(np.shape(array), Fore.RED)
 
     def __init__(self, size, inipos):
         self.posval = inipos
-        self.array = np.full((size, 1, 1), '🔥')
+        self.array = np.full((size, 1, 1), '#')
         self.msk = np.full(np.shape(self.array), Fore.RED)
 
     def body(self):

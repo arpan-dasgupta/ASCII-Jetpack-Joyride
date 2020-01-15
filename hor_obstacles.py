@@ -9,12 +9,12 @@ class HorObstacle(Obstacle):
 
     def __init__(self, size, inipos):
         self.posval = inipos
-        self.array = np.full((1, size, 1), '🔥')
+        self.array = np.full((1, size, 1), '#')
         self.msk = np.full(np.shape(self.array), Fore.RED)
 
 
 def obstacle_gen():
-    baseh = np.random.randint(int(SCREENHEIGHT/4), int(SCREENHEIGHT*3/4))
+    baseh = np.random.randint(0, SCREENHEIGHT - 10)
     key_val = np.random.randint(0, 3)
     if key_val == 1:
         obs = Obstacle(np.random.randint(4, 7), [baseh, SCREENWIDTH-1])
