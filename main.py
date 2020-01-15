@@ -12,6 +12,7 @@ from hor_obstacles import obstacle_gen
 from kbhit import KBHit
 from magnet import Magnet, magnet_spawner
 from player import Mandalorian, SCREENWIDTH
+from scenery import Scenery
 from snowball import Snowball
 import config
 
@@ -98,7 +99,7 @@ def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs, d
     return 1
 
 
-def update_objects(per, coins, obstacles, bullets, magnets, boss, snowballs, dragon):
+def update_objects(per, coins, obstacles, bullets, magnets, boss, snowballs, dragon, scenes):
     if not config.DRAGON_MODE:
         per.update_pos()
     else:
@@ -116,14 +117,28 @@ def update_objects(per, coins, obstacles, bullets, magnets, boss, snowballs, dra
     for mag in magnets:
         mag.update_pos()
         per.attract(mag.get_pos(), mag.get_range())
+    for scene in scenes:
+        scene.update_pos()
     boss.update_pos(per.return_pos())
 
 
-def render_objects(scr,  per, coins, obstacle, bullets, magnets, boss, snowballs, dragon):
+def render_objects(scr,  per, coins, obstacle, bullets, magnets, boss, snowballs, dragon, scenes):
     to_rem_c = []
     to_rem_o = []
     to_rem_m = []
     to_rem_s = []
+    to_rem_sc = []
+    i = 0
+    for scene in scenes:
+        f_f1, f_f2 = scene.body()
+        if scene.get_pos()[1] + np.shape(f_f1)[1] <= 0:
+            to_rem_sc.append(scene)
+            continue
+        scr.add_to_screen(f_f1, f_f2, scene.get_pos(), 1)
+        i += 1
+    for a_a in to_rem_sc:
+        scenes.remove(a_a)
+        del a_a
     i = 0
     for coin in coins:
         if coin.get_pos()[1] <= 0:
@@ -207,6 +222,7 @@ def main():
         keypress = KBHit()
         pos = per.return_pos()
         coins = []
+        scenes = []
         obstacles = []
         bullets = []
         magnets = []
@@ -249,6 +265,9 @@ def main():
                 elif c_h == '4':
                     new_s = boss.shoot()
                     snowballs.append(new_s)
+                elif c_h == '5':
+                    new_s = Scenery()
+                    scenes.append(new_s)
                 elif c_h == 'y':
                     config.DRAGON_MODE = 1 - config.DRAGON_MODE
                 elif c_h == 'h':
@@ -264,7 +283,7 @@ def main():
             clear()
             scr.clrscr()
             update_objects(per, coins, obstacles, bullets,
-                           magnets, boss, snowballs, dragon)
+                           magnets, boss, snowballs, dragon, scenes)
             if not (config.MANUAL_MODE or config.BOSS_MODE):
                 if np.random.random_sample()*(len(coins)+1) < 0.04:
                     new_c = random_coin_gen()
@@ -275,12 +294,15 @@ def main():
                 if np.random.random_sample()*(500*len(magnets)+1) < 0.04:
                     new_m = magnet_spawner()
                     magnets.append(new_m)
+                if np.random.random_sample()*(len(scenes) <= 1) < 0.96:
+                    new_s = Scenery()
+                    scenes.append(new_s)
             if config.BOSS_MODE and (not config.MANUAL_MODE):
                 if np.random.random_sample()*len(snowballs) < 0.06:
                     new_s = boss.shoot()
                     snowballs.append(new_s)
             render_objects(scr, per, coins,
-                           obstacles, bullets, magnets, boss, snowballs, dragon)
+                           obstacles, bullets, magnets, boss, snowballs, dragon, scenes)
             if check_collisions(per, obstacles, magnets, coins,
                                 bullets, boss, snowballs, dragon) == -1:
                 died = 1

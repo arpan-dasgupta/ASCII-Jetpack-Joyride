@@ -14,11 +14,23 @@ class Screen:
         lower = np.full((3, SCREENWIDTH, 1), Back.GREEN)
         self.color_mask[SCREENHEIGHT:, :, :] = lower
 
-    def add_to_screen(self, obj, col_m, start):
-        self.matrix[start[0]:start[0] +
-                    np.shape(obj)[0], start[1]:start[1]+np.shape(obj)[1]] = obj
-        self.color_mask[start[0]:start[0] +
-                        np.shape(obj)[0], start[1]:start[1]+np.shape(obj)[1]] = col_m
+    def add_to_screen(self, obj, col_m, start, overload=None):
+        if overload == None:
+            self.matrix[start[0]:start[0] +
+                        np.shape(obj)[0], start[1]:start[1]+np.shape(obj)[1]] = obj
+            self.color_mask[start[0]:start[0] +
+                            np.shape(obj)[0], start[1]:start[1]+np.shape(obj)[1]] = col_m
+        else:
+            # print(SCREENWIDTH, start, np.shape(obj), max(
+            #     start[1], 0), start[1]+np.shape(obj)[1])
+            self.matrix[start[0]:start[0] +
+                        np.shape(obj)[0], max(start[1], 0):start[1]+np.shape(obj)[1]] = obj[:, max(0, -start[1]):min(np.shape(obj)[1], SCREENWIDTH-start[1])]
+            self.color_mask[start[0]:start[0] +
+                            np.shape(obj)[0], max(start[1], 0):start[1]+np.shape(obj)[1]] = col_m[:, max(0, -start[1]):min(np.shape(obj)[1], SCREENWIDTH-start[1])]
+            # self.matrix[np.max(start[0], 0):np.max(np.min(start[0] +
+            #                                               np.shape(obj)[0], SCREENHEIGHT), 0), np.max(start[1], 0):np.max(np.min(start[1] + np.shape(obj)[1], SCREENWIDTH), 0)] = obj[:, max(0, -start[0]):min(np.shape(obj)[0], SCREENWIDTH-start[1])]
+            # self.color_mask[np.max(start[0], 0):np.max(np.min(start[0] +
+            #                                                   np.shape(obj)[0], SCREENHEIGHT), 0), np.max(start[1], 0):np.max(np.min(start[1] + np.shape(obj)[1], SCREENWIDTH), 0)] = col_m[:, max(0, -start[0]):min(np.shape(obj)[0], SCREENWIDTH-start[1])]
 
     def printscreen(self, shield_status):
         print(Style.BRIGHT, end='')
