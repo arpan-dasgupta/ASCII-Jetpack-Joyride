@@ -25,7 +25,7 @@ class Snowball(Moving):
 
     def update_pos(self, player_pos):
         self.cur_pos[1] -= 2
-        print(player_pos[0], self.cur_pos[0])
+        # print(player_pos[0], self.cur_pos[0])
         if player_pos[0] < self.cur_pos[0]:
             self.cur_pos[0] -= (np.random.random_sample() < self.diff)
         elif player_pos[0] > self.cur_pos[0]:

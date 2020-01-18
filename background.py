@@ -6,30 +6,30 @@ import config
 
 class Screen:
 
-    color_mask = np.full((SCREENHEIGHT+3, SCREENWIDTH, 1), Fore.RED)
-    matrix = np.full((SCREENHEIGHT+3, SCREENWIDTH, 1), ' ')
-    background_color = Back.LIGHTCYAN_EX
+    __color_mask = np.full((SCREENHEIGHT+3, SCREENWIDTH, 1), Fore.RED)
+    __matrix = np.full((SCREENHEIGHT+3, SCREENWIDTH, 1), ' ')
+    __background_color = Back.LIGHTCYAN_EX
 
     def __init__(self):
         lower = np.full((3, SCREENWIDTH, 1), Back.GREEN)
-        self.color_mask[SCREENHEIGHT:, :, :] = lower
+        self.__color_mask[SCREENHEIGHT:, :, :] = lower
 
     def add_to_screen(self, obj, col_m, start, overload=None):
         if overload == None:
-            self.matrix[start[0]:start[0] +
-                        np.shape(obj)[0], start[1]:start[1]+np.shape(obj)[1]] = obj
-            self.color_mask[start[0]:start[0] +
-                            np.shape(obj)[0], start[1]:start[1]+np.shape(obj)[1]] = col_m
+            self.__matrix[start[0]:start[0] +
+                          np.shape(obj)[0], start[1]:start[1]+np.shape(obj)[1]] = obj
+            self.__color_mask[start[0]:start[0] +
+                              np.shape(obj)[0], start[1]:start[1]+np.shape(obj)[1]] = col_m
         else:
             # print(SCREENWIDTH, start, np.shape(obj), max(
             #     start[1], 0), start[1]+np.shape(obj)[1])
-            self.matrix[start[0]:start[0] +
-                        np.shape(obj)[0], max(start[1], 0):start[1]+np.shape(obj)[1]] = obj[:, max(0, -start[1]):min(np.shape(obj)[1], SCREENWIDTH-start[1])]
-            self.color_mask[start[0]:start[0] +
-                            np.shape(obj)[0], max(start[1], 0):start[1]+np.shape(obj)[1]] = col_m[:, max(0, -start[1]):min(np.shape(obj)[1], SCREENWIDTH-start[1])]
-            # self.matrix[np.max(start[0], 0):np.max(np.min(start[0] +
+            self.__matrix[start[0]:start[0] +
+                          np.shape(obj)[0], max(start[1], 0):start[1]+np.shape(obj)[1]] = obj[:, max(0, -start[1]):min(np.shape(obj)[1], SCREENWIDTH-start[1])]
+            self.__color_mask[start[0]:start[0] +
+                              np.shape(obj)[0], max(start[1], 0):start[1]+np.shape(obj)[1]] = col_m[:, max(0, -start[1]):min(np.shape(obj)[1], SCREENWIDTH-start[1])]
+            # self.__matrix[np.max(start[0], 0):np.max(np.min(start[0] +
             #                                               np.shape(obj)[0], SCREENHEIGHT), 0), np.max(start[1], 0):np.max(np.min(start[1] + np.shape(obj)[1], SCREENWIDTH), 0)] = obj[:, max(0, -start[0]):min(np.shape(obj)[0], SCREENWIDTH-start[1])]
-            # self.color_mask[np.max(start[0], 0):np.max(np.min(start[0] +
+            # self.__color_mask[np.max(start[0], 0):np.max(np.min(start[0] +
             #                                                   np.shape(obj)[0], SCREENHEIGHT), 0), np.max(start[1], 0):np.max(np.min(start[1] + np.shape(obj)[1], SCREENWIDTH), 0)] = col_m[:, max(0, -start[0]):min(np.shape(obj)[0], SCREENWIDTH-start[1])]
 
     def printscreen(self, shield_status):
@@ -37,7 +37,7 @@ class Screen:
         to_print = ""
         for i in range(SCREENHEIGHT+3):
             for j in range(SCREENWIDTH):
-                to_print += (self.background_color + self.color_mask[i][j][0] + self.matrix[i]
+                to_print += (self.__background_color + self.__color_mask[i][j][0] + self.__matrix[i]
                              [j][0] + Style.RESET_ALL)
             to_print += '\n'
         to_print += ("Score - "+str(config.SCORE) +
@@ -64,11 +64,11 @@ class Screen:
         print(to_print)
 
     def clrscr(self):
-        self.matrix = np.full((SCREENHEIGHT+3, SCREENWIDTH, 1), ' ')
-        self.color_mask = np.full(
+        self.__matrix = np.full((SCREENHEIGHT+3, SCREENWIDTH, 1), ' ')
+        self.__color_mask = np.full(
             (SCREENHEIGHT+3, SCREENWIDTH, 1), Fore.RED)
         lower = np.full((3, SCREENWIDTH, 1), Back.GREEN)
-        self.color_mask[SCREENHEIGHT:, :, :] = lower
+        self.__color_mask[SCREENHEIGHT:, :, :] = lower
 
 
 # sc = Screen()
