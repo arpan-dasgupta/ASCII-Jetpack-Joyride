@@ -6,9 +6,8 @@ from moving import Moving
 
 class Magnet(Moving):
 
-    magnet_range = 50
-
     def __init__(self, inipos):
+        self.__magnet_range = 50
         self._posval = inipos
 
     def body(self):
@@ -21,7 +20,7 @@ class Magnet(Moving):
         return self.arr, self.msk
 
     def get_range(self):
-        return self.magnet_range
+        return self.__magnet_range
 
 
 def magnet_spawner():

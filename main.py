@@ -33,7 +33,7 @@ def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs, d
                 part1, _, pos = indiv
                 if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
                         np.shape(part3)[0], np.shape(part3)[1]], pos, bullet.get_pos()):
-                    config.SCORE += 5
+                    config.SCORE += config.SCORE_INCREMENTOR
                     flag = 1
                     break
         if flag == 1:
@@ -66,7 +66,7 @@ def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs, d
             if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
                     np.shape(part3)[0], np.shape(part3)[1]], boss.get_pos(), bullet.get_pos()):
                 boss.get_hit()
-                config.SCORE += 5
+                config.SCORE += config.SCORE_INCREMENTOR
                 to_rem_b.append(bullet)
                 if boss.get_lives() == 0:
                     return 2
@@ -100,7 +100,7 @@ def check_collisions(per, obstacles, magnets, coins, bullets, boss, snowballs, d
             part1, _ = snowball.body()
             if collision_checker([np.shape(part1)[0], np.shape(part1)[1]], [
                     np.shape(part3)[0], np.shape(part3)[1]], snowball.get_pos(), bullet.get_pos()):
-                config.SCORE += 5
+                config.SCORE += config.SCORE_INCREMENTOR
                 to_rem_b.add(bullet)
                 to_rem_s.add(snowball)
     for snow in to_rem_s:
@@ -227,7 +227,6 @@ def main():
     # temp = 0
     flag = 0
     scr = Screen()
-    config.LIVES = 3
     died = 0
     reset()
     while config.LIVES > 0:
@@ -316,23 +315,23 @@ def main():
             update_objects(per, coins, obstacles, bullets,
                            magnets, boss, snowballs, dragon, scenes)
             if not (config.MANUAL_MODE or config.BOSS_MODE):
-                if np.random.random_sample()*(len(coins)+1) < 0.04:
+                if np.random.random_sample()*(len(coins)+1) < config.COIN_GEN_RATE:
                     new_c = random_coin_gen()
                     coins.extend(new_c)
-                if np.random.random_sample()*np.sqrt((len(obstacles)+1)) < 0.17:
+                if np.random.random_sample()*np.sqrt((len(obstacles)+1)) < config.OBSTACLE_GEN_RATE:
                     new_o = obstacle_gen()
                     obstacles.append(new_o)
-                if np.random.random_sample()*(500*len(magnets)+1) < 0.04:
+                if np.random.random_sample()*(config.RATE_CONTROL*len(magnets)+1) < config.MAGNET_GEN_RATE:
                     new_m = magnet_spawner()
                     magnets.append(new_m)
-            if not config.MANUAL_MODE and np.random.random_sample()*(len(scenes) < 2) > 0.96:
+            if not config.MANUAL_MODE and np.random.random_sample()*(len(scenes) < 2) > config.SCENERY_GEN_RATE:
                 new_s = Scenery()
                 scenes.append(new_s)
             if config.BOSS_MODE and (not config.MANUAL_MODE):
-                if not config.DRAGON_MODE == 1 and np.random.random_sample()*np.sqrt(len(snowballs)) < 0.15:
+                if not config.DRAGON_MODE == 1 and np.random.random_sample()*np.sqrt(len(snowballs)) < config.BOSS_FIRE_RATE_PLAYER:
                     new_s = boss.shoot()
                     snowballs.append(new_s)
-                elif config.DRAGON_MODE == 1 and np.random.random_sample() < 0.62:
+                elif config.DRAGON_MODE == 1 and np.random.random_sample() < config.BOSS_FIRE_RATE_DRAGON:
                     new_s = boss.shoot()
                     snowballs.append(new_s)
             render_objects(scr, per, coins,
@@ -351,50 +350,14 @@ def main():
                 print("YOU WIN!")
                 exit()
             time.sleep(SLEEP_TIME)
-            if config.SCORE > 50 and flag == 0:
+            if config.SCORE > config.BOSS_THRESH and flag == 0:
                 config.BOSS_MODE = 1
                 flag = 1
                 clear_2()
-                print("""888                                 .d888d8b        888     888    
-888                                d88P" Y8P        888     888    
-888                                888              888     888    
-88888b.  .d88b. .d8888b .d8888b    888888888 .d88b. 88888b. 888888 
-888 "88bd88""88b88K     88K        888   888d88P"88b888 "88b888    
-888  888888  888"Y8888b."Y8888b.   888   888888  888888  888888    
-888 d88PY88..88P     X88     X88   888   888Y88b 888888  888Y88b.  
-88888P"  "Y88P"  88888P' 88888P'   888   888 "Y88888888  888 "Y888 
-                                                 888               
-                                            Y8b d88P               
-                                             "Y88P"                """)
+                print(config.BOSS_FIGHT)
                 time.sleep(2)
     clear_2()
-    print(Back.WHITE + Fore.BLACK +
-          """┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼
-███▀▀▀██┼███▀▀▀███┼███▀█▄█▀███┼██▀▀▀
-██┼┼┼┼██┼██┼┼┼┼┼██┼██┼┼┼█┼┼┼██┼██┼┼┼
-██┼┼┼▄▄▄┼██▄▄▄▄▄██┼██┼┼┼▀┼┼┼██┼██▀▀▀
-██┼┼┼┼██┼██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██┼┼┼
-███▄▄▄██┼██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██▄▄▄
-┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼
-███▀▀▀███┼▀███┼┼██▀┼██▀▀▀┼██▀▀▀▀██▄┼
-██┼┼┼┼┼██┼┼┼██┼┼██┼┼██┼┼┼┼██┼┼┼┼┼██┼
-██┼┼┼┼┼██┼┼┼██┼┼██┼┼██▀▀▀┼██▄▄▄▄▄▀▀┼
-██┼┼┼┼┼██┼┼┼██┼┼█▀┼┼██┼┼┼┼██┼┼┼┼┼██┼
-███▄▄▄███┼┼┼─▀█▀┼┼─┼██▄▄▄┼██┼┼┼┼┼██▄
-┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼
-┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼
-┼┼┼┼┼┼████▄┼┼┼▄▄▄▄▄▄▄┼┼┼▄████┼┼┼┼┼┼┼
-┼┼┼┼┼┼┼┼┼▀▀█▄█████████▄█▀▀┼┼┼┼┼┼┼┼┼┼
-┼┼┼┼┼┼┼┼┼┼┼█████████████┼┼┼┼┼┼┼┼┼┼┼┼
-┼┼┼┼┼┼┼┼┼┼┼██▀▀▀███▀▀▀██┼┼┼┼┼┼┼┼┼┼┼┼
-┼┼┼┼┼┼┼┼┼┼┼██┼┼┼███┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼
-┼┼┼┼┼┼┼┼┼┼┼█████▀▄▀█████┼┼┼┼┼┼┼┼┼┼┼┼
-┼┼┼┼┼┼┼┼┼┼┼┼███████████┼┼┼┼┼┼┼┼┼┼┼┼┼
-┼┼┼┼┼┼┼┼▄▄▄██┼┼█▀█▀█┼┼██▄▄▄┼┼┼┼┼┼┼┼┼
-┼┼┼┼┼┼┼┼▀▀██┼┼┼┼┼┼┼┼┼┼┼██▀▀┼┼┼┼┼┼┼┼┼
-┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼
-┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼
-            """)
+    print(Back.WHITE + Fore.BLACK + config.GAME_OVER)
     print("YOUR SCORE - " + str(config.SCORE))
 
 
