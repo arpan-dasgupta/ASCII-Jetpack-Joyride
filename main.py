@@ -229,13 +229,13 @@ def main():
     scr = Screen()
     died = 0
     reset()
+    boss = Boss()
     while config.LIVES > 0:
         if died == 1:
             clear()
             died = 0
             time.sleep(2)
         snowballs = []
-        boss = Boss()
         per = Mandalorian()
         dragon = Dragon()
         keypress = KBHit()
