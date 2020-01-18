@@ -6,7 +6,7 @@ from background import Screen
 from boss import Boss
 from coins import random_coin_gen
 from collision import collision_checker
-from config import clear, tick, SLEEP_TIME, reset, clear_2
+from config import clear, SLEEP_TIME, reset, clear_2
 from dragon import Dragon
 from hor_obstacles import obstacle_gen
 from kbhit import KBHit
@@ -231,6 +231,7 @@ def main():
     died = 0
     reset()
     boss = Boss()
+    config.TIMER = 2000
     while config.LIVES > 0:
         if died == 1:
             clear()
@@ -248,7 +249,13 @@ def main():
         magnets = []
         scr.add_to_screen(*(per.body()), pos)
         while True:
-            tick()
+            config.TIMER -= 1
+            if config.TIMER == 0:
+                config.LIVES = 0
+                clear_2()
+                print("You ran out of time :(")
+                time.sleep(3)
+                break
             if keypress.kbhit():
                 c_h = keypress.getch()
                 if c_h == 'w':

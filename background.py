@@ -42,7 +42,7 @@ class Screen:
                              [j][0] + Style.RESET_ALL)
             to_print += '\n'
         to_print += ("Score - "+str(config.SCORE) +
-                     "\t TIME - " + str(config.TIMER) + "\t Lives - " + str(config.LIVES)+"\t")
+                     "\t TIME - " + str(config.TIMER) + "  " + "\t Lives - " + str(config.LIVES)+"\t")
         if shield_status[0] == 1:
             to_print += ("Shield active for time -  " +
                          str(shield_status[1]) + '\t')
