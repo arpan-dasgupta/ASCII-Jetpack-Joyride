@@ -33,12 +33,13 @@ class Boss(Person):
         self.__mask=np.full(np.shape(self.__array),Back.BLACK+Fore.WHITE)
 
     def update_pos(self,player_pos):
+        siz = 14
         if player_pos[0]<self._cur_pos[0]:
             self._cur_pos[0]-=1
         elif player_pos[0]>self._cur_pos[0]+10:
             self._cur_pos[0]+=1
-        if self._cur_pos[0] + 14 > SCREENHEIGHT:
-            self._cur_pos[0] = SCREENHEIGHT - 14
+        if self._cur_pos[0] + siz > SCREENHEIGHT:
+            self._cur_pos[0] = SCREENHEIGHT - siz
         # print(np.shape(self.__array))
 
     def shoot(self):

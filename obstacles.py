@@ -9,9 +9,9 @@ class Obstacle(Moving):
     msk = np.full(np.shape(array), Fore.RED)
 
     def __init__(self, size, inipos):
-        self.posval = inipos
+        self._posval = inipos
         self.array = np.full((size, 1, 1), '#')
         self.msk = np.full(np.shape(self.array), Fore.RED)
 
     def body(self):
-        return [[self.array, self.msk, self.posval]]
+        return [[self.array, self.msk, self._posval]]

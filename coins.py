@@ -6,19 +6,17 @@ from moving import Moving
 
 class Coins(Moving):
 
-    coinval = 1
-
     def __init__(self, value, inipos):
-        self.posval = inipos
-        self.coinval = value
+        self._posval = inipos
+        self.__coinval = value
 
     def get_val(self):
-        return self.coinval
+        return self.__coinval
 
     def body(self):
         array = np.full((1, 1, 1), '*')
         msk = np.full(np.shape(array), Fore.BLACK)
-        self.coinval = self.coinval
+        self.__coinval = self.__coinval
         return array, msk
 # c = Coins(5, [0, 0])
 # print(c.get_val())

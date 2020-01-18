@@ -1,17 +1,18 @@
 import numpy as np
 from colorama import Fore, Back, Style
-from config import SCREENWIDTH, SCREENHEIGHT, SCORE, TIMER
+from config import SCREENWIDTH, SCREENHEIGHT, SCORE, TIMER, GROUNDWIDTH
 import config
 
 
 class Screen:
 
-    __color_mask = np.full((SCREENHEIGHT+3, SCREENWIDTH, 1), Fore.RED)
-    __matrix = np.full((SCREENHEIGHT+3, SCREENWIDTH, 1), ' ')
+    __color_mask = np.full(
+        (SCREENHEIGHT+GROUNDWIDTH, SCREENWIDTH, 1), Fore.RED)
+    __matrix = np.full((SCREENHEIGHT+GROUNDWIDTH, SCREENWIDTH, 1), ' ')
     __background_color = Back.LIGHTCYAN_EX
 
     def __init__(self):
-        lower = np.full((3, SCREENWIDTH, 1), Back.GREEN)
+        lower = np.full((GROUNDWIDTH, SCREENWIDTH, 1), Back.GREEN)
         self.__color_mask[SCREENHEIGHT:, :, :] = lower
 
     def add_to_screen(self, obj, col_m, start, overload=None):
@@ -35,7 +36,7 @@ class Screen:
     def printscreen(self, shield_status):
         print(Style.BRIGHT, end='')
         to_print = ""
-        for i in range(SCREENHEIGHT+3):
+        for i in range(SCREENHEIGHT+GROUNDWIDTH):
             for j in range(SCREENWIDTH):
                 to_print += (self.__background_color + self.__color_mask[i][j][0] + self.__matrix[i]
                              [j][0] + Style.RESET_ALL)
@@ -64,10 +65,11 @@ class Screen:
         print(to_print)
 
     def clrscr(self):
-        self.__matrix = np.full((SCREENHEIGHT+3, SCREENWIDTH, 1), ' ')
+        self.__matrix = np.full(
+            (SCREENHEIGHT+GROUNDWIDTH, SCREENWIDTH, 1), ' ')
         self.__color_mask = np.full(
-            (SCREENHEIGHT+3, SCREENWIDTH, 1), Fore.RED)
-        lower = np.full((3, SCREENWIDTH, 1), Back.GREEN)
+            (SCREENHEIGHT+GROUNDWIDTH, SCREENWIDTH, 1), Fore.RED)
+        lower = np.full((GROUNDWIDTH, SCREENWIDTH, 1), Back.GREEN)
         self.__color_mask[SCREENHEIGHT:, :, :] = lower
 
 

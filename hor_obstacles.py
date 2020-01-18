@@ -8,7 +8,7 @@ from obstacles import Obstacle
 class HorObstacle(Obstacle):
 
     def __init__(self, size, inipos):
-        self.posval = inipos
+        self._posval = inipos
         self.array = np.full((1, size, 1), '#')
         self.msk = np.full(np.shape(self.array), Fore.RED)
 

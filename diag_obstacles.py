@@ -12,7 +12,7 @@ class DiagObstacle(Moving):
 
     def __init__(self, size, inipos, direction):
         self.size = size
-        self.posval = inipos
+        self._posval = inipos
         self.ele = []
         for i in range(size):
             if direction == 1:
@@ -24,9 +24,9 @@ class DiagObstacle(Moving):
         self.msk = np.full(np.shape(self.array), Fore.RED)
 
     def update_pos(self):
-        # print(self.posval, self.posval[1] -
+        # print(self._posval, self._posval[1] -
         #       self.ele[0].get_pos()[1], len(self.ele))
-        self.posval[1] -= 2 + 2 * (config.SPEED_UP == 1)
+        self._posval[1] -= 2 + 2 * (config.SPEED_UP == 1)
         for element in self.ele:
             element.update_pos()
 

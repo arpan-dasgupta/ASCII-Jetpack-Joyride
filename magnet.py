@@ -9,7 +9,7 @@ class Magnet(Moving):
     magnet_range = 50
 
     def __init__(self, inipos):
-        self.posval = inipos
+        self._posval = inipos
 
     def body(self):
         self.arr = np.full((5, 5, 1), 'M')

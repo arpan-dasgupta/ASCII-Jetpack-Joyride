@@ -30,6 +30,7 @@ MANUAL_MODE = 0
 BOSS_MODE = 0
 DRAGON_MODE = 2
 SPEED_UP = 0
+GROUNDWIDTH = 3
 
 
 def reset():
