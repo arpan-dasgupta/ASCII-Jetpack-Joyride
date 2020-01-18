@@ -16,7 +16,7 @@ class Mandalorian(Person):
     shield_cooldown = 300
 
     def __init__(self):
-        self.cur_pos = [0, 0]
+        self._cur_pos = [0, 0]
         self.shield_cooldown = 10
         self.shield_timer = 0
 
@@ -24,29 +24,29 @@ class Mandalorian(Person):
         pass
 
     def attract(self, pos, range):
-        if np.abs(pos[0]-self.cur_pos[0])+np.abs(pos[1]-self.cur_pos[1]) < range:
+        if np.abs(pos[0]-self._cur_pos[0])+np.abs(pos[1]-self._cur_pos[1]) < range:
             ran = np.random.random_sample()
             new_a = np.subtract(pos, ran)
             ratio = new_a[0]/(new_a[0]+new_a[1]+0.001)
             # print(ratio, ran)
-            # print(self.cur_pos, pos)
+            # print(self._cur_pos, pos)
             if ran < ratio:
-                self.cur_pos[1] += 4 * ((-1)**(pos[1] < self.cur_pos[1]))
+                self._cur_pos[1] += 4 * ((-1)**(pos[1] < self._cur_pos[1]))
             else:
-                self.cur_pos[0] += 2 * ((-1)**(pos[0] < self.cur_pos[0]))
+                self._cur_pos[0] += 2 * ((-1)**(pos[0] < self._cur_pos[0]))
             # exit()
-            # print(self.cur_pos)
-            if self.cur_pos[0] < 0:
-                self.cur_pos[0] = 0
-            if self.cur_pos[1] < 0:
-                self.cur_pos[1] = 0
-            if self.cur_pos[0] > SCREENHEIGHT:
-                self.cur_pos[0] = SCREENHEIGHT
-            if self.cur_pos[1] > SCREENWIDTH:
-                self.cur_pos[1] = SCREENWIDTH
+            # print(self._cur_pos)
+            if self._cur_pos[0] < 0:
+                self._cur_pos[0] = 0
+            if self._cur_pos[1] < 0:
+                self._cur_pos[1] = 0
+            if self._cur_pos[0] > SCREENHEIGHT:
+                self._cur_pos[0] = SCREENHEIGHT
+            if self._cur_pos[1] > SCREENWIDTH:
+                self._cur_pos[1] = SCREENWIDTH
 
     def return_pos(self):
-        return self.cur_pos
+        return self._cur_pos
 
     def shield_activate(self):
         if self.shield_cooldown != 0:
@@ -61,9 +61,9 @@ class Mandalorian(Person):
         self.shield_timer = 6
 
     def update_pos(self):
-        self.cur_pos[0] = max(0, min(SCREENHEIGHT-self.dim[0],
-                                     self.cur_pos[0]+self.velocity[0]))
-        if self.cur_pos[0] == SCREENHEIGHT-self.dim[0] or self.cur_pos == 0:
+        self._cur_pos[0] = max(0, min(SCREENHEIGHT-self.dim[0],
+                                     self._cur_pos[0]+self.velocity[0]))
+        if self._cur_pos[0] == SCREENHEIGHT-self.dim[0] or self._cur_pos == 0:
             self.velocity[0] = 0
         self.velocity[0] += 1
         if self.shield_timer == 0:
@@ -85,17 +85,17 @@ class Mandalorian(Person):
 
     def move_up(self, val):
         self.velocity[0] -= val
-        # self.cur_pos[0] = max(0, self.cur_pos[0]-val)
+        # self._cur_pos[0] = max(0, self._cur_pos[0]-val)
 
     def move_left(self, val):
-        self.cur_pos[1] = max(0, self.cur_pos[1]-val)
+        self._cur_pos[1] = max(0, self._cur_pos[1]-val)
 
     def move_down(self, val):
         self.velocity[0] += val
-        # self.cur_pos[0] = min(SCREENHEIGHT-self.dim[0], self.cur_pos[0]+val)
+        # self._cur_pos[0] = min(SCREENHEIGHT-self.dim[0], self._cur_pos[0]+val)
 
     def move_right(self, val):
-        self.cur_pos[1] = min(SCREENWIDTH-self.dim[1], self.cur_pos[1]+val)
+        self._cur_pos[1] = min(SCREENWIDTH-self.dim[1], self._cur_pos[1]+val)
 
     def body(self):
         array = np.array([[[' '],

@@ -6,14 +6,14 @@ from snowball import Snowball
 
 class Boss(Person):
 
-    cur_pos = []
-    array = np.array([])
-    mask = np.array([])
-    lives = 16
+    _cur_pos = []
+    __array = np.array([])
+    __mask = np.array([])
+    __lives = 16
 
     def __init__(self):
-        self.cur_pos = [int(SCREENHEIGHT/2-5),int(SCREENWIDTH-35)]
-        self.array = np.array(
+        self._cur_pos = [int(SCREENHEIGHT/2-5),int(SCREENWIDTH-35)]
+        self.__array = np.array(
             [[ [' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],['_'],['.'],['-'],['\''],['~'],['~'],['~'],['~'],['~'],['~'],['`'],['-'],['.'],['_'],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],],
             [ [' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],['/'],[' '],[' '],[' '],[' '],[' '],[' '],['|'],['|'],[' '],[' '],[' '],[' '],[' '],[' '],['\\'],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],],
             [ [' '],[' '],[' '],[' '],[' '],[' '],[' '],['/'],[' '],[' '],[' '],[' '],[' '],[' '],[' '],['|'],['|'],[' '],[' '],[' '],[' '],[' '],[' '],[' '],['\\'],[' '],[' '],[' '],[' '],[' '],[' '],[' '],],
@@ -30,35 +30,35 @@ class Boss(Person):
             [ [' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],['|'],[' '],[' '],[' '],[' '],['`'],['\''],[' '],[' '],[' '],[' '],['|'],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],],
                 [ [' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],[' '],]]
             )
-        self.mask=np.full(np.shape(self.array),Back.BLACK+Fore.WHITE)
+        self.__mask=np.full(np.shape(self.__array),Back.BLACK+Fore.WHITE)
 
     def update_pos(self,player_pos):
-        if player_pos[0]<self.cur_pos[0]:
-            self.cur_pos[0]-=1
-        elif player_pos[0]>self.cur_pos[0]+10:
-            self.cur_pos[0]+=1
-        if self.cur_pos[0] + 14 > SCREENHEIGHT:
-            self.cur_pos[0] = SCREENHEIGHT - 14
-        # print(np.shape(self.array))
+        if player_pos[0]<self._cur_pos[0]:
+            self._cur_pos[0]-=1
+        elif player_pos[0]>self._cur_pos[0]+10:
+            self._cur_pos[0]+=1
+        if self._cur_pos[0] + 14 > SCREENHEIGHT:
+            self._cur_pos[0] = SCREENHEIGHT - 14
+        # print(np.shape(self.__array))
 
     def shoot(self):
-        snow = Snowball([self.cur_pos[0],self.cur_pos[1]])
+        snow = Snowball([self._cur_pos[0],self._cur_pos[1]])
         return snow
 
     def body(self):
         for i in range(16):
-            self.array[14][2*i] = '[' if i < self.lives else ' '
-            self.array[14][2*i+1] = ']' if i < self.lives else ' '
-        return self.array,self.mask
+            self.__array[14][2*i] = '[' if i < self.__lives else ' '
+            self.__array[14][2*i+1] = ']' if i < self.__lives else ' '
+        return self.__array,self.__mask
     
     def get_hit(self):
-        self.lives -=1
+        self.__lives -=1
 
     def get_lives(self):
-        return self.lives
+        return self.__lives
 
     def get_pos(self):
-        return self.cur_pos
+        return self._cur_pos
     
 
         

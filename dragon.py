@@ -32,13 +32,13 @@ class Dragon(Person):
         return self.stages[self.call_count],self.mask
 
     def get_pos(self):
-        return self.cur_pos
+        return self._cur_pos
 
     def return_pos(self):
-        return self.cur_pos
+        return self._cur_pos
 
     def __init__(self):
-        self.cur_pos = [0,0]
+        self._cur_pos = [0,0]
         a = np.array([[['_'], ['_'], [' '], [' '], [' '], [' '], [' '], [' '], [' '], [' '], [' '], [' '], [' '], [' '], [' '], [' '], [' '], [' '], ['_'], ['_'], [' '], ['|'], ['\\'], [' '], [' '], [' '], [' '], [' '], [' '], [' '], ],
                       [[' '], [' '], ['-'], ['-'], ['_'], ['_'], [' '], [' '], [' '], [' '], [' '], [' '], [' '], [' '], ['_'],
                        ['_'], ['-'], ['-'], [' '], [' '], ['~'], [' '], [' '], ['^'], ['^'], ['^'], ['\\'], ['\\'], [' '], [' '], ],
@@ -90,21 +90,21 @@ class Dragon(Person):
         self.alt_mask = np.full(np.shape(self.ud_stages[0]),Fore.BLACK)
 
     def move_up(self, val):
-        initial = self.cur_pos[0]
-        self.cur_pos[0] = max(0, self.cur_pos[0]-val)
-        initial -= self.cur_pos[0]
+        initial = self._cur_pos[0]
+        self._cur_pos[0] = max(0, self._cur_pos[0]-val)
+        initial -= self._cur_pos[0]
         self.last_vals.pop(0)
         self.last_vals.append(initial)
 
     def move_down(self, val):
-        initial = self.cur_pos[0]
-        self.cur_pos[0] = min(config.SCREENHEIGHT-np.shape(self.stages[0])[0]-2, self.cur_pos[0]+val)
-        initial -= self.cur_pos[0]
+        initial = self._cur_pos[0]
+        self._cur_pos[0] = min(config.SCREENHEIGHT-np.shape(self.stages[0])[0]-2, self._cur_pos[0]+val)
+        initial -= self._cur_pos[0]
         self.last_vals.pop(0)
         self.last_vals.append(initial)
 
     def shoot(self):
-        bullet = Bullet([self.cur_pos[0],self.cur_pos[1]+np.shape(self.stages[0])[1]])
+        bullet = Bullet([self._cur_pos[0],self._cur_pos[1]+np.shape(self.stages[0])[1]])
         return bullet
 
     def attract(self,pos,range):

@@ -6,13 +6,13 @@ from moving import Moving
 
 class Snowball(Moving):
 
-    cur_pos = [0, 0]
+    _cur_pos = [0, 0]
     bod = np.array([])
     mask = np.array([])
     diff = 0.6
 
     def __init__(self, pos):
-        self.cur_pos = pos
+        self._cur_pos = pos
         self.bod = np.array([[['_'], ['\\'], ['/'], ['_']],
                              [[' '], ['/'], ['\\'], [' ']]])
         self.mask = np.full(np.shape(self.bod), Fore.RED)
@@ -21,17 +21,17 @@ class Snowball(Moving):
         return self.bod, self.mask
 
     def get_pos(self):
-        return self.cur_pos
+        return self._cur_pos
 
     def update_pos(self, player_pos):
-        self.cur_pos[1] -= 2
-        # print(player_pos[0], self.cur_pos[0])
-        if player_pos[0] < self.cur_pos[0]:
-            self.cur_pos[0] -= (np.random.random_sample() < self.diff)
-        elif player_pos[0] > self.cur_pos[0]:
-            self.cur_pos[0] += (np.random.random_sample() < self.diff)
-        if self.cur_pos[0] + 1 > SCREENHEIGHT:
-            self.cur_pos[0] = SCREENHEIGHT - 1
+        self._cur_pos[1] -= 2
+        # print(player_pos[0], self._cur_pos[0])
+        if player_pos[0] < self._cur_pos[0]:
+            self._cur_pos[0] -= (np.random.random_sample() < self.diff)
+        elif player_pos[0] > self._cur_pos[0]:
+            self._cur_pos[0] += (np.random.random_sample() < self.diff)
+        if self._cur_pos[0] + 1 > SCREENHEIGHT:
+            self._cur_pos[0] = SCREENHEIGHT - 1
 
 
 if __name__ == "__main__":
