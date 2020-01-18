@@ -51,7 +51,7 @@ class Mandalorian(Person):
     def shield_activate(self):
         if self.__shield_cooldown != 0:
             return
-        self.__shield_timer = 60
+        self.__shield_timer = config.SHIELD_OTIMER
         self.__shield_activated = 1
 
     def shield_status(self):
@@ -61,7 +61,7 @@ class Mandalorian(Person):
         self.__shield_timer = 6
 
     def update_pos(self):
-        print(self._cur_pos, self.__velocity)
+        # print(self._cur_pos, self.__velocity)
         self._cur_pos[0] = max(0, min(SCREENHEIGHT-self.__dim[0],
                                       self._cur_pos[0]+self.__velocity[0]))
         self._cur_pos[1] = max(0, min(SCREENWIDTH-self.__dim[1],
@@ -70,18 +70,18 @@ class Mandalorian(Person):
             self.__velocity[0] = 0
         if self._cur_pos[1] == SCREENWIDTH - self.__dim[1] or self._cur_pos[1] == 0:
             self.__velocity[1] = 0
-        self.__velocity[0] += 1
+        self.__velocity[0] += config.GRAV
         if self.__velocity[1] > 0:
-            self.__velocity[1] -= 1
+            self.__velocity[1] -= config.DRAG
         elif self.__velocity[1] < 0:
-            self.__velocity[1] += 1
+            self.__velocity[1] += config.DRAG
         if self.__shield_timer == 0:
             self.__shield_cooldown = max(self.__shield_cooldown-1, 0)
             self.__shield_activated = 0
         else:
             self.__shield_timer -= 1
             if self.__shield_timer == 0:
-                self.__shield_cooldown = 300
+                self.__shield_cooldown = config.SHIELD_CTIMER
                 self.__shield_activated = 0
         if self.__speed_timer == 0:
             config.SPEED_UP = 0
@@ -90,7 +90,7 @@ class Mandalorian(Person):
 
     def speed_up(self):
         config.SPEED_UP = 1
-        self.__speed_timer = 20
+        self.__speed_timer = config.SPEED_TIMER
 
     def move_up(self, val):
         self.__velocity[0] -= val

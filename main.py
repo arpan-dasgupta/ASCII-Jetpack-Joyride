@@ -252,20 +252,20 @@ def main():
                 c_h = keypress.getch()
                 if c_h == 'w':
                     if config.DRAGON_MODE == 1:
-                        dragon.move_up(3)
+                        dragon.move_up(config.IMPULSE)
                     else:
                         per.move_up(2)
                 elif c_h == 's':
                     if config.DRAGON_MODE == 1:
-                        dragon.move_down(3)
+                        dragon.move_down(config.IMPULSE)
                     else:
                         per.move_down(1)
                 elif c_h == 'a':
                     if not config.DRAGON_MODE == 1:
-                        per.move_left(3)
+                        per.move_left(config.IMPULSE)
                 elif c_h == 'd':
                     if not config.DRAGON_MODE == 1:
-                        per.move_right(3)
+                        per.move_right(config.IMPULSE)
                 elif c_h == 'f':
                     if len(bullets) < 5 or config.DRAGON_MODE == 1:
                         if not config.DRAGON_MODE == 1:
