@@ -42,8 +42,8 @@ class Boss(Person):
             self._cur_pos[0] = SCREENHEIGHT - siz
         # print(np.shape(self.__array))
 
-    def shoot(self):
-        snow = Snowball([self._cur_pos[0],self._cur_pos[1]])
+    def shoot(self,player_pos):
+        snow = Snowball([self._cur_pos[0],self._cur_pos[1]],player_pos.copy())
         return snow
 
     def body(self):

@@ -11,11 +11,18 @@ class Snowball(Moving):
     __mask = np.array([])
     __diff = 0.3
 
-    def __init__(self, pos):
+    # def __init__(self, pos):
+    #     self._cur_pos = pos
+    #     self.__bod = np.array([[['_'], ['\\'], ['/'], ['_']],
+    #                            [[' '], ['/'], ['\\'], [' ']]])
+    #     self.__mask = np.full(np.shape(self.__bod), Fore.RED)
+
+    def __init__(self, pos, player_pos):
         self._cur_pos = pos
         self.__bod = np.array([[['_'], ['\\'], ['/'], ['_']],
                                [[' '], ['/'], ['\\'], [' ']]])
         self.__mask = np.full(np.shape(self.__bod), Fore.RED)
+        self.__st_pos = player_pos
 
     def body(self):
         return self.__bod, self.__mask
@@ -23,19 +30,28 @@ class Snowball(Moving):
     def get_pos(self):
         return self._cur_pos
 
-    def update_pos(self, player_pos):
+    # def update_pos(self, player_pos):
+    #     self._cur_pos[1] -= 2
+    #     # print(player_pos[0], self._cur_pos[0])
+    #     if player_pos[0] < self._cur_pos[0]:
+    #         self._cur_pos[0] -= (np.random.random_sample() < self.__diff)
+    #     elif player_pos[0] > self._cur_pos[0]:
+    #         self._cur_pos[0] += (np.random.random_sample() < self.__diff)
+    #     if self._cur_pos[0] + 1 > SCREENHEIGHT:
+    #         self._cur_pos[0] = SCREENHEIGHT - 1
+
+    def update_pos(self):
         self._cur_pos[1] -= 2
-        # print(player_pos[0], self._cur_pos[0])
-        if player_pos[0] < self._cur_pos[0]:
+        if self.__st_pos[0] < self._cur_pos[0]:
             self._cur_pos[0] -= (np.random.random_sample() < self.__diff)
-        elif player_pos[0] > self._cur_pos[0]:
+        elif self.__st_pos[0] > self._cur_pos[0]:
             self._cur_pos[0] += (np.random.random_sample() < self.__diff)
         if self._cur_pos[0] + 1 > SCREENHEIGHT:
             self._cur_pos[0] = SCREENHEIGHT - 1
 
 
 if __name__ == "__main__":
-    sn = Snowball([0, 0])
+    sn = Snowball([0, 0], [0, 0])
     a, _ = sn.body()
 
     for row in a:

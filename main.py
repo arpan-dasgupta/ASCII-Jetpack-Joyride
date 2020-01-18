@@ -124,7 +124,8 @@ def update_objects(per, coins, obstacles, bullets, magnets, boss, snowballs, dra
     for bul in bullets:
         bul.update_pos()
     for snowball in snowballs:
-        snowball.update_pos(per.return_pos())
+        # snowball.update_pos(per.return_pos())
+        snowball.update_pos()
     for mag in magnets:
         mag.update_pos()
         per.attract(mag.get_pos(), mag.get_range())
@@ -288,7 +289,7 @@ def main():
                     magnets.append(new_m)
                 elif c_h == '4':
                     if config.BOSS_MODE:
-                        new_s = boss.shoot()
+                        new_s = boss.shoot(per.return_pos())
                         snowballs.append(new_s)
                 elif c_h == '5':
                     new_s = Scenery()
@@ -329,10 +330,10 @@ def main():
                 scenes.append(new_s)
             if config.BOSS_MODE and (not config.MANUAL_MODE):
                 if not config.DRAGON_MODE == 1 and np.random.random_sample()*np.sqrt(len(snowballs)) < config.BOSS_FIRE_RATE_PLAYER:
-                    new_s = boss.shoot()
+                    new_s = boss.shoot(per.return_pos())
                     snowballs.append(new_s)
                 elif config.DRAGON_MODE == 1 and np.random.random_sample() < config.BOSS_FIRE_RATE_DRAGON:
-                    new_s = boss.shoot()
+                    new_s = boss.shoot(per.return_pos())
                     snowballs.append(new_s)
             render_objects(scr, per, coins,
                            obstacles, bullets, magnets, boss, snowballs, dragon, scenes)
