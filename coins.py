@@ -32,7 +32,7 @@ def random_coin_gen():
     coin_width = np.random.randint(4, 6)
     for i in range(coin_height):
         for j in range(coin_width):
-            basew = SCREENWIDTH - coin_width - 1
+            basew = SCREENWIDTH - 11
             coin_obj = Coins(1, [baseh+i, basew+j])
             new_c.append(coin_obj)
     return new_c

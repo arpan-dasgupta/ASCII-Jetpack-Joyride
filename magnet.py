@@ -27,5 +27,5 @@ def magnet_spawner():
     # baseh = np.random.randint(int(SCREENHEIGHT*2/3), int(SCREENHEIGHT*5/6))
     # m = Magnet([int(SCREENHEIGHT/2), int(SCREENWIDTH/2)])
     baseh = np.random.randint(int(SCREENHEIGHT*2/3), int(SCREENHEIGHT*5/6))
-    m = Magnet([baseh, SCREENWIDTH-5])
+    m = Magnet([baseh, SCREENWIDTH-11])
     return m

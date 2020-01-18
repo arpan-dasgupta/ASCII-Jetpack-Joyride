@@ -232,6 +232,7 @@ def main():
     reset()
     boss = Boss()
     config.TIMER = 2000
+    cooldown = 0
     while config.LIVES > 0:
         if died == 1:
             clear()
@@ -323,15 +324,18 @@ def main():
             update_objects(per, coins, obstacles, bullets,
                            magnets, boss, snowballs, dragon, scenes)
             if not (config.MANUAL_MODE or config.BOSS_MODE):
-                if np.random.random_sample()*(len(coins)+1) < config.COIN_GEN_RATE:
+                if np.random.random_sample()*(len(coins)+1) < config.COIN_GEN_RATE and cooldown < 0:
                     new_c = random_coin_gen()
                     coins.extend(new_c)
-                if np.random.random_sample()*np.sqrt((len(obstacles)+1)) < config.OBSTACLE_GEN_RATE:
+                    cooldown = config.REFRATE
+                if np.random.random_sample()*np.sqrt((len(obstacles)+1)) < config.OBSTACLE_GEN_RATE and cooldown < 0:
                     new_o = obstacle_gen()
                     obstacles.append(new_o)
-                if np.random.random_sample()*(config.RATE_CONTROL*len(magnets)+1) < config.MAGNET_GEN_RATE:
+                    cooldown = config.REFRATE
+                if np.random.random_sample()*(config.RATE_CONTROL*len(magnets)+1) < config.MAGNET_GEN_RATE and cooldown < 0:
                     new_m = magnet_spawner()
                     magnets.append(new_m)
+                    cooldown = config.REFRATE
             if not config.MANUAL_MODE and np.random.random_sample()*(len(scenes) < 2) > config.SCENERY_GEN_RATE:
                 new_s = Scenery()
                 scenes.append(new_s)
@@ -364,6 +368,7 @@ def main():
                 clear_2()
                 print(config.BOSS_FIGHT)
                 time.sleep(2)
+            cooldown -= 1
     clear_2()
     print(Back.WHITE + Fore.BLACK + config.GAME_OVER)
     print("YOUR SCORE - " + str(config.SCORE))
