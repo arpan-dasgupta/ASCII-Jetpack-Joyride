@@ -12,7 +12,7 @@ class Mandalorian(Person):
     __velocity = [0, 0]
     __shield_timer = 20
     __shield_activated = 0
-    __shield_timer = 20
+    __speed_timer = 20
     __shield_cooldown = 300
 
     def __init__(self):
@@ -61,85 +61,61 @@ class Mandalorian(Person):
         self.__shield_timer = 6
 
     def update_pos(self):
+        print(self._cur_pos, self.__velocity)
         self._cur_pos[0] = max(0, min(SCREENHEIGHT-self.__dim[0],
                                       self._cur_pos[0]+self.__velocity[0]))
-        if self._cur_pos[0] == SCREENHEIGHT-self.__dim[0] or self._cur_pos == 0:
+        self._cur_pos[1] = max(0, min(SCREENWIDTH-self.__dim[1],
+                                      self._cur_pos[1]+self.__velocity[1]))
+        if self._cur_pos[0] == SCREENHEIGHT-self.__dim[0] or self._cur_pos[0] == 0:
             self.__velocity[0] = 0
+        if self._cur_pos[1] == SCREENWIDTH - self.__dim[1] or self._cur_pos[1] == 0:
+            self.__velocity[1] = 0
         self.__velocity[0] += 1
+        if self.__velocity[1] > 0:
+            self.__velocity[1] -= 1
+        elif self.__velocity[1] < 0:
+            self.__velocity[1] += 1
         if self.__shield_timer == 0:
             self.__shield_cooldown = max(self.__shield_cooldown-1, 0)
             self.__shield_activated = 0
         else:
             self.__shield_timer -= 1
             if self.__shield_timer == 0:
-                self.__shield_cooldown = 50
+                self.__shield_cooldown = 300
                 self.__shield_activated = 0
-        if self.__shield_timer == 0:
+        if self.__speed_timer == 0:
             config.SPEED_UP = 0
         else:
-            self.__shield_timer -= 1
+            self.__speed_timer -= 1
 
     def speed_up(self):
         config.SPEED_UP = 1
-        self.__shield_timer = 20
+        self.__speed_timer = 20
 
     def move_up(self, val):
         self.__velocity[0] -= val
         # self._cur_pos[0] = max(0, self._cur_pos[0]-val)
 
     def move_left(self, val):
-        self._cur_pos[1] = max(0, self._cur_pos[1]-val)
+        self.__velocity[1] -= val
+        # self._cur_pos[1] = max(0, self._cur_pos[1]-val)
 
     def move_down(self, val):
         self.__velocity[0] += val
         # self._cur_pos[0] = min(SCREENHEIGHT-self.__dim[0], self._cur_pos[0]+val)
 
     def move_right(self, val):
-        self._cur_pos[1] = min(SCREENWIDTH-self.__dim[1], self._cur_pos[1]+val)
+        self.__velocity[1] += val
+        # self._cur_pos[1] = min(SCREENWIDTH-self.__dim[1], self._cur_pos[1]+val)
 
     def body(self):
-        array = np.array([[[' '],
-                           [' '],
-                           [' '],
-                           ['='],
-                           ['='],
-                           [' '],
-                           [' '],
-                           [' ']],
-                          [['<'],
-                           ['^'],
-                           ['\\'],
-                           ['('],
-                           [')'],
-                           ['/'],
-                           ['^'],
-                           ['>']],
-                          [[' '],
-                           ['\\'],
-                           ['/'],
-                           [' '],
-                           [' '],
-                           ['\\'],
-                           ['/'],
-                           [' ']
-                           ],
-                          [[' '],
-                           [' '],
-                           ['/'],
-                           [' '],
-                           [' '],
-                           ['\\'],
-                           [' '],
-                           [' ']],
-                          [[' '],
-                           [' '],
-                           ['`'],
-                           ['\''],
-                           ['\''],
-                           ['`'],
-                           [' '],
-                           [' '],
-                           ]])
+        array = np.array([[[' '], [' '], [' '], ['='], ['='], [' '], [' '], [' ']],
+                          [['<'], ['^'], ['\\'], ['('], [')'], [
+                              '/'], ['^'], ['>']],
+                          [[' '], ['\\'], ['/'], [' '],
+                              [' '], ['\\'], ['/'], [' ']],
+                          [[' '], [' '], ['/'], [' '], [' '], ['\\'], [' '], [' ']],
+                          [[' '], [' '], ['`'], ['\''], ['\''], ['`'], [' '], [' '], ]])
         if self.__shield_activated == 1:
             msk = np.full(np.shape(array), Back.BLACK + Fore.WHITE)
         elif config.SPEED_UP:
