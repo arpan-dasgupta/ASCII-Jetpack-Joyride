@@ -231,7 +231,7 @@ def main():
     died = 0
     reset()
     boss = Boss()
-    config.TIMER = 2000
+    config.TIMER = 3000
     cooldown = 0
     while config.LIVES > 0:
         if died == 1:
