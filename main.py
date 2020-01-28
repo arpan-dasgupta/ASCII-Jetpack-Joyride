@@ -319,6 +319,68 @@ def main():
                     died = 1
                     config.LIVES = 0
                     break
+            if keypress.kbhit():
+                c_h = keypress.getch()
+                if c_h == 'w':
+                    if config.DRAGON_MODE == 1:
+                        dragon.move_up(config.IMPULSE)
+                    else:
+                        per.move_up(2)
+                elif c_h == 's':
+                    if config.DRAGON_MODE == 1:
+                        dragon.move_down(config.IMPULSE)
+                    else:
+                        per.move_down(1)
+                elif c_h == 'a':
+                    if not config.DRAGON_MODE == 1:
+                        per.move_left(config.IMPULSE)
+                elif c_h == 'd':
+                    if not config.DRAGON_MODE == 1:
+                        per.move_right(config.IMPULSE)
+                elif c_h == 'f':
+                    if len(bullets) < 5 or config.DRAGON_MODE == 1:
+                        if not config.DRAGON_MODE == 1:
+                            bullets.append(per.shoot())
+                        else:
+                            bullets.append(dragon.shoot())
+                elif c_h == '1':
+                    new_c = random_coin_gen()
+                    coins.extend(new_c)
+                elif c_h == '2':
+                    # print(obstacles)
+                    new_o = obstacle_gen()
+                    obstacles.append(new_o)
+                    # print(obstacles)
+                    # if temp > 1:
+                    #     exit()
+                    # temp += 1
+                elif c_h == '3':
+                    new_m = magnet_spawner()
+                    magnets.append(new_m)
+                elif c_h == '4':
+                    if config.BOSS_MODE:
+                        new_s = boss.shoot(per.return_pos())
+                        snowballs.append(new_s)
+                elif c_h == '5':
+                    new_s = Scenery()
+                    scenes.append(new_s)
+                elif c_h == '6':
+                    config.BOSS_MODE = 1-config.BOSS_MODE
+                elif c_h == 'y':
+                    if config.DRAGON_MODE == 2:
+                        config.DRAGON_MODE = 1
+                    elif config.DRAGON_MODE == 1:
+                        config.DRAGON_MODE = 2
+                elif c_h == ' ':
+                    if not config.DRAGON_MODE == 1:
+                        per.shield_activate()
+                elif c_h == 'g':
+                    if not config.DRAGON_MODE == 1:
+                        per.speed_up()
+                elif c_h == 'q':
+                    died = 1
+                    config.LIVES = 0
+                    break
             clear()
             scr.clrscr()
             update_objects(per, coins, obstacles, bullets,
