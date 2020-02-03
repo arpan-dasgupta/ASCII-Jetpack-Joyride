@@ -18,8 +18,95 @@ ip1 = 0
 ip2 = 0
 turn = 0
 
-# the C of CRUD
 
+def new_move(player, r_n, c_n):
+    global board_size
+    if game_state[r_n*board_size+c_n] != 0:
+        return -1
+
+    game_state[r_n*board_size+c_n] = player
+
+    for i in range(r_n + 1, board_size):
+        if game_state[i*board_size+c_n] == player:
+            for k in range(r_n + 1, i):
+                game_state[k*board_size+c_n] = player
+            break
+
+    for i in range(r_n-1, -1, -1):
+        if game_state[i*board_size+c_n] == player:
+            for k in range(r_n - 1, i, -1):
+                game_state[k*board_size+c_n] = player
+            break
+
+    for j in range(c_n + 1, board_size):
+        if game_state[r_n*board_size+j] == player:
+            for k in range(c_n + 1, j):
+                game_state[r_n*board_size+k] = player
+            break
+
+    for j in range(c_n - 1, -1, -1):
+        if game_state[r_n*board_size+j] == player:
+            for k in range(c_n - 1, j, -1):
+                game_state[r_n*board_size+k] = player
+            break
+
+    row = r_n + 1
+    col = c_n + 1
+    while row < board_size and col < board_size:
+        if game_state[row*board_size+col] == player:
+            rr = r_n + 1
+            cc = c_n + 1
+            while rr < row and cc < col:
+                game_state[row*board_size+col] = player
+                rr += 1
+                cc += 1
+            break
+        row += 1
+        col += 1
+
+    row = r_n - 1
+    col = c_n - 1
+    while row >= 0 and col >= 0:
+        if game_state[row*board_size+col] == player:
+            rr = r_n - 1
+            cc = c_n - 1
+            while rr > row and cc > col:
+                game_state[row*board_size+col] = player
+                rr -= 1
+                cc -= 1
+            break
+        row -= 1
+        col -= 1
+
+    row = r_n + 1
+    col = c_n - 1
+    while row < board_size and col >= 0:
+        if game_state[row*board_size+col] == player:
+            rr = r_n + 1
+            cc = c_n - 1
+            while rr < row and cc > col:
+                game_state[row*board_size+col] = player
+                rr += 1
+                cc -= 1
+            break
+        row += 1
+        col -= 1
+
+    row = r_n - 1
+    col = c_n + 1
+    while row >= 0 and col < board_size:
+        if game_state[row*board_size+col] == player:
+            rr = r_n - 1
+            cc = c_n + 1
+            while rr > row and cc < col:
+                game_state[row*board_size+col] = player
+                rr -= 1
+                cc += 1
+            break
+        row -= 1
+        col += 1
+
+    return 0
 
 # @mod_game.route("/delete", methods=["POST"])
 # def delete():
@@ -31,6 +118,7 @@ turn = 0
 #     """
 #     db.drop_all()
 #     return jsonify(success=True)
+
 
 @mod_game.route("/display", methods=["GET"])
 def delete():
@@ -74,7 +162,7 @@ def start():
 
     return jsonify(success=True)
 
-# the R of CRUD
+
 @mod_game.route("/get_status", methods=["GET"])
 def get_status():
     """
@@ -87,7 +175,7 @@ def get_status():
 
     return jsonify(success=True, state=game_state, turn=turn)
 
-# the D of CRUD
+
 @mod_game.route("/make_move", methods=["POST"])
 def make_move():
     """
@@ -106,8 +194,12 @@ def make_move():
     print(request.remote_addr)
 
     if (turn == 1 and request.remote_addr == ip1) or (turn == 2 and request.remote_addr == ip2):
-        game_state[board_size*r_pos+c_pos] = turn
-        turn ^= 3
-        return jsonify(success=True)
+        # game_state[board_size*r_pos+c_pos] = turn
+        val = new_move(turn, r_pos, c_pos)
+        if val == -1:
+            return jsonify(success=False)
+        else:
+            turn ^= 3
+            return jsonify(success=True)
 
     return jsonify(success=False)
